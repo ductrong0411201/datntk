@@ -1,0 +1,8 @@
+export const LOGOUT_REQUESTED = "app/LOGOUT_REQUESTED"
+export const LOGOUT_SUCCESS = "app/LOGOUT_SUCCESS"
+export const LOGOUT_FAILED = "app/LOGOUT_FAILED"
+export const LOGOUT = "app/LOGOUT"
+export const CLOSE_SIDE_NAV = "app/CLOSE_SIDE_NAV"
+export const GET_ME_REQUESTED = "app/GET_ME_REQUESTED"
+export const GET_ME_SUCCESS = "app/GET_ME_SUCCESS"
+export const GET_ME_FAILED = "app/GET_ME_FAILED"
