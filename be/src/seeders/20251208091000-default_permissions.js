@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const now = new Date();
     const actions = ["CREATE", "READ", "UPDATE", "DELETE"];
-    const resourceTypes = ["USER", "ROLE"];
+    const resourceTypes = ["USER", "ROLE", "SUBJECT", "COURSE", "PAYMENT", "PAYMENT_METHOD", "DOCUMENT", "DOCUMENT_TYPE"];
 
     const permissions = [];
     let id = 1;

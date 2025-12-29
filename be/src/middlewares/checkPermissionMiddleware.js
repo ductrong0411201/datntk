@@ -25,7 +25,6 @@ module.exports = function (resourceType, action) {
           }
         ]
       });
-      console.log('user', user);
       if (!user || !user.roleDetail || !user.roleDetail.permissions) {
         return sendError(res, 403, "Không có quyền truy cập");
       }

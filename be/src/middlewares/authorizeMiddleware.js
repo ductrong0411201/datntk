@@ -10,7 +10,6 @@ module.exports = function (req, res, next) {
     : null;
   
   const token = tokenFromCookie || tokenFromHeader;
-  console.log('token',token);
   if (!token) {
     return sendError(res, 403, "Không có quyền truy cập");
   }

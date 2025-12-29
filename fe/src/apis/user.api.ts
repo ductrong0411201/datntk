@@ -1,7 +1,7 @@
 import { apiClient } from "./base.api"
 
 export interface UserListItem {
-  id: string
+  id: number
   name: string
   userName: string
   email: string
@@ -69,7 +69,7 @@ export const getUsersApi = async (
   throw new Error(response?.message || "Lấy danh sách người dùng thất bại")
 }
 
-export const getUserByIdApi = async (id: string): Promise<UserListItem> => {
+export const getUserByIdApi = async (id: number): Promise<UserListItem> => {
   const response = await apiClient.get<UserResponse>(`/users/${id}`)
 
   if (response?.status === 200 && response?.data) {
@@ -95,7 +95,7 @@ export const createUserApi = async (data: {
   throw new Error(response?.message || "Tạo người dùng thất bại")
 }
 
-export const updateUserApi = async (id: string, data: {
+export const updateUserApi = async (id: number, data: {
   name?: string
   userName?: string
   email?: string
@@ -110,7 +110,7 @@ export const updateUserApi = async (id: string, data: {
   throw new Error(response?.message || "Cập nhật người dùng thất bại")
 }
 
-export const changePasswordApi = async (id: string, password: string): Promise<void> => {
+export const changePasswordApi = async (id: number, password: string): Promise<void> => {
   const response = await apiClient.put<{ status: number; message: string; data: null }>(`/users/${id}/password`, { password })
 
   if (response?.status === 200) {
@@ -120,7 +120,7 @@ export const changePasswordApi = async (id: string, password: string): Promise<v
   throw new Error(response?.message || "Đổi mật khẩu thất bại")
 }
 
-export const deleteUserApi = async (id: string): Promise<void> => {
+export const deleteUserApi = async (id: number): Promise<void> => {
   const response = await apiClient.delete<{ status: number; message: string }>(`/users/${id}`)
 
   if (response?.status === 200) {

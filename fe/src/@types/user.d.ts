@@ -19,7 +19,7 @@ interface ReqRegister {
 interface ResRegisterApi extends Res {
   status: number
   data: {
-    id: string
+    id: number
     name: string
     userName: string
     email: string
@@ -39,7 +39,7 @@ export interface Permission {
 }
 
 export interface User {
-  id: string
+  id: number
   name: string
   userName: string
   email: string
