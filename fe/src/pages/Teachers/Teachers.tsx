@@ -1,102 +1,118 @@
 import { useState, useEffect } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getUsersApi, deleteUserApi, createUserApi, updateUserApi, changePasswordApi, type UserListItem } from "src/apis/user.api"
-import { getRolesApi, type Role } from "src/apis/role.api"
-import { message, Modal, Form, Input, Select, Button } from "antd"
+import { getTeachersApi, deleteTeacherApi, createTeacherApi, updateTeacherApi, changeTeacherPasswordApi, type UserListItem } from "src/apis/teacher.api"
+import { getSubjectsApi, type Subject } from "src/apis/subject.api"
+import { message, Modal, Form, Input, Button, Select, DatePicker } from "antd"
 import { KeyOutlined } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
+import dayjs from "dayjs"
 
-function Users() {
+function Teachers() {
   const [form] = Form.useForm()
   const [passwordForm] = Form.useForm()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false)
-  const [editingUser, setEditingUser] = useState<UserListItem | null>(null)
-  const [changingPasswordUser, setChangingPasswordUser] = useState<UserListItem | null>(null)
+  const [editingTeacher, setEditingTeacher] = useState<UserListItem | null>(null)
+  const [changingPasswordTeacher, setChangingPasswordTeacher] = useState<UserListItem | null>(null)
   const [loading, setLoading] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
-  const [roles, setRoles] = useState<Role[]>([])
+  const [subjects, setSubjects] = useState<Subject[]>([])
 
   useEffect(() => {
-    const loadRoles = async () => {
+    const loadSubjects = async () => {
       try {
-        const response = await getRolesApi(1, 100)
-        setRoles(response.items)
+        const response = await getSubjectsApi(1, 1000)
+        setSubjects(response.items)
       } catch (error) {
-        console.error("Lỗi khi tải danh sách vai trò:", error)
+        console.error("Lỗi khi tải danh sách môn học:", error)
       }
     }
-    loadRoles()
+    loadSubjects()
   }, [])
+
+  const fetchTeachers = async (page: number = 1, limit: number = 10) => {
+    const teachers = await getTeachersApi()
+    const start = (page - 1) * limit
+    const end = start + limit
+    return {
+      items: teachers.slice(start, end),
+      meta: {
+        page,
+        limit,
+        total: teachers.length,
+        totalPages: Math.ceil(teachers.length / limit)
+      }
+    }
+  }
 
   const columns: ColumnsType<UserListItem> = [
     {
       title: "Họ và tên",
       dataIndex: "name",
-      key: "name",
-      sorter: true
+      key: "name"
     },
     {
       title: "Tên đăng nhập",
       dataIndex: "userName",
-      key: "userName",
-      sorter: true
+      key: "userName"
     },
     {
       title: "Email",
       dataIndex: "email",
-      key: "email",
-      sorter: true
-    },
-    {
-      title: "Vai trò",
-      dataIndex: ["roleDetail", "name"],
-      key: "role",
-      render: (_: unknown, record: UserListItem) => record.roleDetail?.name || "Chưa có"
+      key: "email"
     }
   ]
 
   const handleAdd = () => {
-    setEditingUser(null)
+    setEditingTeacher(null)
     form.resetFields()
     setIsModalVisible(true)
   }
 
   const handleView = (record: UserListItem) => {
     Modal.info({
-      title: "Chi tiết người dùng",
+      title: "Chi tiết giáo viên",
       width: 600,
       content: (
         <div>
           <p><strong>Họ và tên:</strong> {record.name}</p>
           <p><strong>Tên đăng nhập:</strong> {record.userName}</p>
           <p><strong>Email:</strong> {record.email}</p>
-          <p><strong>Vai trò:</strong> {record.roleDetail?.name || "Chưa có"}</p>
-          <p><strong>Mã vai trò:</strong> {record.roleDetail?.code || "Chưa có"}</p>
+          <p><strong>Vai trò:</strong> {record.roleDetail?.name || "Giáo viên"}</p>
+          {record.subject && <p><strong>Môn dạy:</strong> {record.subject.name}</p>}
+          {record.degree && <p><strong>Bằng cấp:</strong> {record.degree}</p>}
+          {record.phoneNumber && <p><strong>Số điện thoại:</strong> {record.phoneNumber}</p>}
+          {record.address && <p><strong>Địa chỉ:</strong> {record.address}</p>}
+          {record.dateOfBirth && <p><strong>Ngày sinh:</strong> {dayjs(record.dateOfBirth).format("DD/MM/YYYY")}</p>}
         </div>
       )
     })
   }
 
   const handleEdit = (record: UserListItem) => {
-    setEditingUser(record)
+    setEditingTeacher(record)
     form.setFieldsValue({
       name: record.name,
       userName: record.userName,
       email: record.email,
-      role: record.role
+      subject_id: record.subject_id,
+      degree: record.degree,
+      phoneNumber: record.phoneNumber,
+      address: record.address,
+      dateOfBirth: record.dateOfBirth ? dayjs(record.dateOfBirth) : null
     })
     setIsModalVisible(true)
   }
 
   const handleDelete = async (record: UserListItem): Promise<void> => {
-    await deleteUserApi(record.id)
+    await deleteTeacherApi(record.id)
+    setRefreshKey(prev => prev + 1)
   }
 
   const handleChangePassword = (record: UserListItem) => {
-    setChangingPasswordUser(record)
+    setChangingPasswordTeacher(record)
     passwordForm.resetFields()
     setIsPasswordModalVisible(true)
   }
@@ -104,15 +120,15 @@ function Users() {
   const handlePasswordModalOk = async () => {
     try {
       const values = await passwordForm.validateFields()
-      if (!changingPasswordUser) return
+      if (!changingPasswordTeacher) return
 
       setPasswordLoading(true)
-      await changePasswordApi(changingPasswordUser.id, values.password)
+      await changeTeacherPasswordApi(changingPasswordTeacher.id, values.password)
       message.success("Đổi mật khẩu thành công")
       setIsPasswordModalVisible(false)
       passwordForm.resetFields()
-      setChangingPasswordUser(null)
-    } catch (error:any) {
+      setChangingPasswordTeacher(null)
+    } catch (error: any) {
       if (error?.errorFields) {
         return
       }
@@ -125,7 +141,7 @@ function Users() {
   const handlePasswordModalCancel = () => {
     setIsPasswordModalVisible(false)
     passwordForm.resetFields()
-    setChangingPasswordUser(null)
+    setChangingPasswordTeacher(null)
   }
 
   const handleModalOk = async () => {
@@ -133,19 +149,24 @@ function Users() {
       const values = await form.validateFields()
       setLoading(true)
 
-      if (editingUser) {
-        await updateUserApi(editingUser.id, values)
-        message.success("Cập nhật người dùng thành công")
+      const submitData = {
+        ...values,
+        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : null
+      }
+
+      if (editingTeacher) {
+        await updateTeacherApi(editingTeacher.id, submitData)
+        message.success("Cập nhật giáo viên thành công")
       } else {
-        await createUserApi(values)
-        message.success("Tạo người dùng thành công")
+        await createTeacherApi(submitData)
+        message.success("Tạo giáo viên thành công")
       }
 
       setIsModalVisible(false)
       form.resetFields()
-      setEditingUser(null)
+      setEditingTeacher(null)
       setRefreshKey(prev => prev + 1)
-    } catch (error:any) {
+    } catch (error: any) {
       if (error?.errorFields) {
         return
       }
@@ -158,20 +179,20 @@ function Users() {
   const handleModalCancel = () => {
     setIsModalVisible(false)
     form.resetFields()
-    setEditingUser(null)
+    setEditingTeacher(null)
   }
 
   return (
     <MainLayout>
       <BaseTable<UserListItem>
-        title="Danh sách người dùng"
+        title="Danh sách giáo viên"
         columns={columns}
-        fetchData={getUsersApi}
+        fetchData={fetchTeachers}
         onAdd={handleAdd}
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        getDeleteMessage={(record) => `Bạn có chắc chắn muốn xóa người dùng "${record.name}"?`}
+        getDeleteMessage={(record) => `Bạn có chắc chắn muốn xóa giáo viên "${record.name}"?`}
         customActions={(record) => (
           <Button
             type="link"
@@ -185,12 +206,12 @@ function Users() {
         refreshKey={refreshKey}
       />
       <Modal
-        title={editingUser ? "Sửa người dùng" : "Thêm người dùng mới"}
+        title={editingTeacher ? "Sửa giáo viên" : "Thêm giáo viên mới"}
         open={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
         confirmLoading={loading}
-        okText={editingUser ? "Cập nhật" : "Tạo mới"}
+        okText={editingTeacher ? "Cập nhật" : "Tạo mới"}
         cancelText="Hủy"
       >
         <Form
@@ -210,7 +231,7 @@ function Users() {
             label="Tên đăng nhập"
             rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập" }]}
           >
-            <Input placeholder="Nhập tên đăng nhập" disabled={!!editingUser} />
+            <Input placeholder="Nhập tên đăng nhập" disabled={!!editingTeacher} />
           </Form.Item>
           <Form.Item
             name="email"
@@ -222,7 +243,7 @@ function Users() {
           >
             <Input placeholder="Nhập email" />
           </Form.Item>
-          {!editingUser && (
+          {!editingTeacher && (
             <Form.Item
               name="password"
               label="Mật khẩu"
@@ -235,19 +256,40 @@ function Users() {
             </Form.Item>
           )}
           <Form.Item
-            name="role"
-            label="Vai trò"
-            rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+            name="subject_id"
+            label="Môn dạy"
           >
-            <Select placeholder="Chọn vai trò">
-              {roles
-                .filter(role => editingUser || role.code !== "admin")
-                .map(role => (
-                  <Select.Option key={role.id} value={role.id}>
-                    {role.name} ({role.code})
-                  </Select.Option>
-                ))}
+            <Select placeholder="Chọn môn học" allowClear>
+              {subjects.map(subject => (
+                <Select.Option key={subject.id} value={subject.id}>
+                  {subject.name}
+                </Select.Option>
+              ))}
             </Select>
+          </Form.Item>
+          <Form.Item
+            name="degree"
+            label="Bằng cấp"
+          >
+            <Input placeholder="Nhập bằng cấp" />
+          </Form.Item>
+          <Form.Item
+            name="phoneNumber"
+            label="Số điện thoại"
+          >
+            <Input placeholder="Nhập số điện thoại" />
+          </Form.Item>
+          <Form.Item
+            name="address"
+            label="Địa chỉ"
+          >
+            <Input.TextArea placeholder="Nhập địa chỉ" rows={2} />
+          </Form.Item>
+          <Form.Item
+            name="dateOfBirth"
+            label="Ngày sinh"
+          >
+            <DatePicker style={{ width: "100%" }} format="DD/MM/YYYY" placeholder="Chọn ngày sinh" />
           </Form.Item>
         </Form>
       </Modal>
@@ -299,5 +341,5 @@ function Users() {
   )
 }
 
-export default Users
+export default Teachers
 

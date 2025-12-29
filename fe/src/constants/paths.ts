@@ -23,6 +23,11 @@ export const PATH = {
     url: "/users",
     name: "Quản lý người dùng"
   } as PathWithResource,
+  SUBJECTS: {
+    resourceType: "SUBJECT",
+    url: "/subjects",
+    name: "Quản lý môn học"
+  } as PathWithResource,
   COURSES: {
     resourceType: "COURSE",
     url: "/courses",
@@ -32,6 +37,21 @@ export const PATH = {
     resourceType: "PAYMENT",
     url: "/payments",
     name: "Quản lý thanh toán"
+  } as PathWithResource,
+  PAYMENT_METHODS: {
+    resourceType: "PAYMENT_METHOD",
+    url: "/payment-methods",
+    name: "Quản lý phương thức thanh toán"
+  } as PathWithResource,
+  TEACHERS: {
+    resourceType: "USER",
+    url: "/teachers",
+    name: "Quản lý giáo viên"
+  } as PathWithResource,
+  STUDENTS: {
+    resourceType: "USER",
+    url: "/students",
+    name: "Quản lý học sinh"
   } as PathWithResource,
   NOT_FOUND: {
     url: "/404",
@@ -51,6 +71,11 @@ export const ADMIN_PATH = {
     url: "/users",
     name: "Quản lý người dùng"
   } as PathWithResource,
+  SUBJECTS: {
+    resourceType: "SUBJECT",
+    url: "/subjects",
+    name: "Quản lý môn học"
+  } as PathWithResource,
   COURSES: {
     resourceType: "COURSE",
     url: "/courses",
@@ -60,6 +85,21 @@ export const ADMIN_PATH = {
     resourceType: "PAYMENT",
     url: "/payments",
     name: "Quản lý thanh toán"
+  } as PathWithResource,
+  PAYMENT_METHODS: {
+    resourceType: "PAYMENT_METHOD",
+    url: "/payment-methods",
+    name: "Quản lý phương thức thanh toán"
+  } as PathWithResource,
+  TEACHERS: {
+    resourceType: "USER",
+    url: "/teachers",
+    name: "Quản lý giáo viên"
+  } as PathWithResource,
+  STUDENTS: {
+    resourceType: "USER",
+    url: "/students",
+    name: "Quản lý học sinh"
   } as PathWithResource,
 
 }

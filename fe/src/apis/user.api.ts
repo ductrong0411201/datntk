@@ -130,3 +130,13 @@ export const deleteUserApi = async (id: number): Promise<void> => {
   throw new Error(response?.message || "Xóa người dùng thất bại")
 }
 
+export const getTeachersApi = async (): Promise<UserListItem[]> => {
+  const response = await apiClient.get<{ status: number; data: UserListItem[]; message: string }>("/users/teachers")
+
+  if (response?.status === 200 && response?.data) {
+    return response.data
+  }
+
+  throw new Error(response?.message || "Lấy danh sách giáo viên thất bại")
+}
+

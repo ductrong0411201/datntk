@@ -1,7 +1,7 @@
 import { connect, type ConnectedProps } from "react-redux"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Layout, Menu } from "antd"
-import { HomeOutlined, SafetyOutlined, UserOutlined } from "@ant-design/icons"
+import { HomeOutlined, SafetyOutlined, UserOutlined, BookOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TeamOutlined } from "@ant-design/icons"
 import { PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { hasPageAccess } from "src/utils/permission"
@@ -37,11 +37,47 @@ const SideNav = (props: Props) => {
       label: PATH.ROLES.name,
       pathKey: "ROLES" as keyof typeof PATH
     },
+    // {
+    //   key: PATH.USERS.url,
+    //   icon: <UserOutlined />,
+    //   label: PATH.USERS.name,
+    //   pathKey: "USERS" as keyof typeof PATH
+    // },
     {
-      key: PATH.USERS.url,
+      key: PATH.TEACHERS.url,
+      icon: <TeamOutlined />,
+      label: PATH.TEACHERS.name,
+      pathKey: "TEACHERS" as keyof typeof PATH
+    },
+    {
+      key: PATH.STUDENTS.url,
       icon: <UserOutlined />,
-      label: PATH.USERS.name,
-      pathKey: "USERS" as keyof typeof PATH
+      label: PATH.STUDENTS.name,
+      pathKey: "STUDENTS" as keyof typeof PATH
+    },
+    {
+      key: PATH.SUBJECTS.url,
+      icon: <BookOutlined />,
+      label: PATH.SUBJECTS.name,
+      pathKey: "SUBJECTS" as keyof typeof PATH
+    },
+    {
+      key: PATH.COURSES.url,
+      icon: <FileTextOutlined />,
+      label: PATH.COURSES.name,
+      pathKey: "COURSES" as keyof typeof PATH
+    },
+    {
+      key: PATH.PAYMENT_METHODS.url,
+      icon: <CreditCardOutlined />,
+      label: PATH.PAYMENT_METHODS.name,
+      pathKey: "PAYMENT_METHODS" as keyof typeof PATH
+    },
+    {
+      key: PATH.PAYMENTS.url,
+      icon: <DollarOutlined />,
+      label: PATH.PAYMENTS.name,
+      pathKey: "PAYMENTS" as keyof typeof PATH
     }
   ]
 

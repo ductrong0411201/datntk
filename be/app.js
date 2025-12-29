@@ -9,6 +9,10 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const rolesRouter = require('./routes/roles');
 const permissionsRouter = require('./routes/permissions');
+const subjectsRouter = require('./routes/subjects');
+const paymentMethodsRouter = require('./routes/paymentMethods');
+const paymentsRouter = require('./routes/payments');
+const courcesRouter = require('./routes/cources');
 const app = express();
 
 // view engine setup
@@ -37,6 +41,10 @@ app.use('/', indexRouter);
 app.use('/', usersRouter);
 app.use('/', rolesRouter);
 app.use('/', permissionsRouter);
+app.use('/', subjectsRouter);
+app.use('/', paymentMethodsRouter);
+app.use('/', paymentsRouter);
+app.use('/', courcesRouter);
 
 const { sendError } = require('./src/utils/response');
 
