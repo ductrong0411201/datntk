@@ -1,4 +1,6 @@
 import { apiClient } from "./base.api"
+import type { ReqLogin, ResLoginApi, ReqRegister, ResRegisterApi, ResLogoutApi, ResGetMeApi } from "../@types/auth"
+import type { User } from "../@types/user"
 
 export const loginApi = async ({
   userNameOrEmail,

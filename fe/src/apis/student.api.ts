@@ -1,11 +1,6 @@
 import { apiClient } from "./base.api"
-import type { UserListItem, UserResponse } from "./user.api"
-
-export interface StudentListResponse {
-  status: number
-  data: UserListItem[]
-  message: string
-}
+import type { UserListItem, UserResponse } from "../@types/user"
+import type { StudentListResponse } from "../@types/student"
 
 export const getStudentsApi = async (): Promise<UserListItem[]> => {
   const response = await apiClient.get<StudentListResponse>("/users/students")

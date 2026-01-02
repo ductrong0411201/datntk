@@ -1,7 +1,8 @@
 import { useState } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getPaymentMethodsApi, deletePaymentMethodApi, createPaymentMethodApi, updatePaymentMethodApi, type PaymentMethod } from "src/apis/paymentMethod.api"
+import { getPaymentMethodsApi, deletePaymentMethodApi, createPaymentMethodApi, updatePaymentMethodApi } from "src/apis/paymentMethod.api"
+import type { PaymentMethod } from "src/@types/paymentMethod"
 import { message, Modal, Form, Input } from "antd"
 import type { ColumnsType } from "antd/es/table"
 

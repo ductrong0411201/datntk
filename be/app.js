@@ -13,6 +13,7 @@ const subjectsRouter = require('./routes/subjects');
 const paymentMethodsRouter = require('./routes/paymentMethods');
 const paymentsRouter = require('./routes/payments');
 const courcesRouter = require('./routes/cources');
+const documentsRouter = require('./routes/documents');
 const app = express();
 
 // view engine setup
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 const corsOptions = {
   origin: function (origin, callback) {
@@ -45,6 +47,7 @@ app.use('/', subjectsRouter);
 app.use('/', paymentMethodsRouter);
 app.use('/', paymentsRouter);
 app.use('/', courcesRouter);
+app.use('/', documentsRouter);
 
 const { sendError } = require('./src/utils/response');
 

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getRolesApi, deleteRoleApi, createRoleApi, updateRoleApi, getRoleByIdApi, type Role } from "src/apis/role.api"
-import { getPermissionsApi, type Permission } from "src/apis/permission.api"
+import { getRolesApi, deleteRoleApi, createRoleApi, updateRoleApi, getRoleByIdApi } from "src/apis/role.api"
+import { getPermissionsApi } from "src/apis/permission.api"
+import type { Role } from "src/@types/role"
+import type { Permission } from "src/@types/permission"
 import { message, Modal, Form, Input, Checkbox, Table, Divider } from "antd"
 import type { ColumnsType } from "antd/es/table"
 

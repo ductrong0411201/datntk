@@ -1,32 +1,5 @@
 import { apiClient } from "./base.api"
-
-export interface Subject {
-  id: number
-  name: string
-  description?: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-export interface SubjectListResponse {
-  status: number
-  data: {
-    items: Subject[]
-    meta: {
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-    }
-  }
-  message: string
-}
-
-export interface SubjectResponse {
-  status: number
-  data: Subject
-  message: string
-}
+import type { Subject, SubjectListResponse, SubjectResponse } from "../@types/subject"
 
 export const getSubjectsApi = async (
   page: number = 1,

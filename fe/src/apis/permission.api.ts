@@ -1,24 +1,5 @@
 import { apiClient } from "./base.api"
-
-export interface Permission {
-  id: number
-  resourceType: string
-  action: string
-}
-
-export interface PermissionListResponse {
-  status: number
-  data: {
-    items: Permission[]
-    meta: {
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-    }
-  }
-  message: string
-}
+import type { Permission, PermissionListResponse } from "../@types/permission"
 
 export const getPermissionsApi = async (): Promise<Permission[]> => {
   const response = await apiClient.get<PermissionListResponse>("/permissions", {

@@ -1,40 +1,5 @@
 import { apiClient } from "./base.api"
-
-export interface UserListItem {
-  id: number
-  name: string
-  userName: string
-  email: string
-  role: number
-  roleDetail?: {
-    id: number
-    name: string
-    code: string
-    description?: string
-  }
-  createdAt?: string
-  updatedAt?: string
-}
-
-export interface UserListResponse {
-  status: number
-  data: {
-    items: UserListItem[]
-    meta: {
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-    }
-  }
-  message: string
-}
-
-export interface UserResponse {
-  status: number
-  data: UserListItem
-  message: string
-}
+import type { UserListItem, UserListResponse, UserResponse } from "../@types/user"
 
 export const getUsersApi = async (
   page: number = 1,

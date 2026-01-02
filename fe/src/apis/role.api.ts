@@ -1,33 +1,5 @@
 import { apiClient } from "./base.api"
-import type { Permission } from "./permission.api"
-
-export interface Role {
-  id: number
-  name: string
-  code: string
-  description?: string
-  permissions?: Permission[]
-}
-
-export interface RoleListResponse {
-  status: number
-  data: {
-    items: Role[]
-    meta: {
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-    }
-  }
-  message: string
-}
-
-export interface RoleResponse {
-  status: number
-  data: Role
-  message: string
-}
+import type { Role, RoleListResponse, RoleResponse } from "../@types/role"
 
 export const getRolesApi = async (
   page: number = 1,

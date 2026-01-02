@@ -5,7 +5,7 @@ import type { ColumnsType } from "antd/es/table"
 import { getCourceStudentsApi, addStudentToCourceApi, removeStudentFromCourceApi } from "src/apis/cource.api"
 import { getStudentsApi } from "src/apis/student.api"
 import type { CourceStudent } from "src/@types/cource"
-import type { UserListItem } from "src/apis/user.api"
+import type { UserListItem } from "src/@types/user"
 import dayjs from "dayjs"
 
 interface CourseStudentsTableProps {

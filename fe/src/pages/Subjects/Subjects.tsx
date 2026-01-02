@@ -1,7 +1,8 @@
 import { useState } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getSubjectsApi, deleteSubjectApi, createSubjectApi, updateSubjectApi, type Subject } from "src/apis/subject.api"
+import { getSubjectsApi, deleteSubjectApi, createSubjectApi, updateSubjectApi } from "src/apis/subject.api"
+import type { Subject } from "src/@types/subject"
 import { message, Modal, Form, Input } from "antd"
 import type { ColumnsType } from "antd/es/table"
 

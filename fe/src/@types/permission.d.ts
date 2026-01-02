@@ -1,4 +1,24 @@
-import type { User, Permission } from "./user"
+import type { User } from "./user"
+
+export interface Permission {
+  id: number
+  resourceType: string
+  action: string
+}
+
+export interface PermissionListResponse {
+  status: number
+  data: {
+    items: Permission[]
+    meta: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }
+  message: string
+}
 
 export type PathWithResource = {
   resourceType: string
