@@ -32,6 +32,10 @@ function CourseStudentsTable({
   const [isStudentModalVisible, setIsStudentModalVisible] = useState(false)
   const [studentForm] = Form.useForm()
   const [loadingStudents, setLoadingStudents] = useState(false)
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10
+  })
 
   useEffect(() => {
     if (courceId) {
@@ -129,6 +133,15 @@ function CourseStudentsTable({
   const getStudentColumns = (): ColumnsType<CourceStudent> => {
     const columns: ColumnsType<CourceStudent> = [
       {
+        title: "STT",
+        key: "stt",
+        width: 60,
+        align: "center",
+        render: (_: unknown, __: unknown, index: number) => {
+          return (pagination.current - 1) * pagination.pageSize + index + 1
+        }
+      },
+      {
         title: "Họ và tên",
         dataIndex: "name",
         key: "name"
@@ -190,7 +203,19 @@ function CourseStudentsTable({
         columns={studentColumns}
         dataSource={students}
         rowKey="id"
-        pagination={false}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: students.length,
+          showSizeChanger: true,
+          showTotal: (total) => `Tổng ${total} học sinh`,
+          onChange: (page, pageSize) => {
+            setPagination({ current: page, pageSize: pageSize || 10 })
+          },
+          onShowSizeChange: (_current, size) => {
+            setPagination({ current: 1, pageSize: size })
+          }
+        }}
         loading={loadingStudents}
         locale={{ emptyText: "Chưa có học sinh nào." }}
       />

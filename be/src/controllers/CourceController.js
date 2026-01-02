@@ -64,14 +64,14 @@ class CourceController extends BaseController {
 
   async create(req, res) {
     try {
-      const { 
-        name, 
-        subject_id, 
-        grade, 
-        start_date, 
-        end_date, 
-        description, 
-        teacher_id, 
+      const {
+        name,
+        subject_id,
+        grade,
+        start_date,
+        end_date,
+        description,
+        teacher_id,
         price,
         lessonDays
       } = req.body;
@@ -122,21 +122,21 @@ class CourceController extends BaseController {
     const currentDate = new Date(start);
     while (currentDate <= end) {
       const dayOfWeekCurrent = currentDate.getDay();
-      
+
       // Tìm các lesson config có thứ trùng với ngày hiện tại
       const matchingConfigs = lessonDaysArray.filter(config => config.dayOfWeek === dayOfWeekCurrent);
-      
+
       // Với mỗi config trùng, tạo một lesson
       matchingConfigs.forEach(lessonConfig => {
         const { startTime, endTime, name: lessonName } = lessonConfig;
-        
+
         // Parse thời gian
         const [startHour, startMinute] = startTime.split(':').map(Number);
         const [endHour, endMinute] = endTime.split(':').map(Number);
 
         const lessonStart = new Date(currentDate);
         lessonStart.setHours(startHour, startMinute, 0, 0);
-        
+
         const lessonEnd = new Date(currentDate);
         lessonEnd.setHours(endHour, endMinute, 0, 0);
 
@@ -166,7 +166,7 @@ class CourceController extends BaseController {
 
   async getStudents(req, res) {
     try {
-      const cource = await this.Model.findByPk(req.params.id);
+      const cource = await Cource.findByPk(req.params.id);
       if (!cource) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }
@@ -192,17 +192,16 @@ class CourceController extends BaseController {
   async addStudent(req, res) {
     try {
       const { student_id } = req.body;
-      
+
       if (!student_id) {
         return sendBadRequest(res, "student_id là bắt buộc");
       }
 
-      const cource = await this.Model.findByPk(req.params.id);
+      const cource = await Cource.findByPk(req.params.id);
       if (!cource) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }
 
-      const { User } = require("../models");
       const student = await User.findByPk(student_id);
       if (!student) {
         return sendNotFound(res, "Không tìm thấy học sinh");
@@ -229,8 +228,8 @@ class CourceController extends BaseController {
   async removeStudent(req, res) {
     try {
       const { student_id } = req.params;
-      
-      const cource = await this.Model.findByPk(req.params.id);
+
+      const cource = await Cource.findByPk(req.params.id);
       if (!cource) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }

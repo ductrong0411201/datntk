@@ -164,9 +164,24 @@ function CourceForm() {
     setLessons(lessons.filter(lesson => lesson.id !== lessonId))
   }
 
+  const getUniqueLessons = (lessons: LessonItem[]): LessonItem[] => {
+    const uniqueMap = new Map<string, LessonItem>()
+    
+    lessons.forEach(lesson => {
+      const key = `${lesson.dayOfWeek}-${lesson.startTime}-${lesson.endTime}`
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, lesson)
+      }
+    })
+    
+    return Array.from(uniqueMap.values())
+  }
+
   const getLessonColumns = (): ColumnsType<LessonItem> => {
-    const baseColumns: ColumnsType<LessonItem> = [
-      {
+    const baseColumns: ColumnsType<LessonItem> = []
+    
+    if (!isEditMode) {
+      baseColumns.push({
         title: "Ngày học",
         dataIndex: "date",
         key: "date",
@@ -174,10 +189,12 @@ function CourceForm() {
           if (date) {
             return date
           }
-          // Nếu không có date (khi tạo mới), hiển thị thứ
           return DAYS_OF_WEEK.find(d => d.value === record.dayOfWeek)?.label || ""
         }
-      },
+      })
+    }
+    
+    baseColumns.push(
       {
         title: "Thứ",
         dataIndex: "dayOfWeek",
@@ -194,7 +211,7 @@ function CourceForm() {
         dataIndex: "endTime",
         key: "endTime"
       }
-    ]
+    )
 
     if (!isEditMode) {
       baseColumns.push({
@@ -217,6 +234,7 @@ function CourceForm() {
   }
 
   const lessonColumns = getLessonColumns()
+  const displayLessons = isEditMode ? getUniqueLessons(lessons) : lessons
 
   const handleCancel = () => {
     navigate(PATH.COURSES.url)
@@ -378,8 +396,8 @@ function CourceForm() {
               </div>
               <Table
                 columns={lessonColumns}
-                dataSource={lessons}
-                rowKey="id"
+                dataSource={displayLessons}
+                rowKey={(record) => isEditMode ? `${record.dayOfWeek}-${record.startTime}-${record.endTime}` : record.id}
                 pagination={false}
                 locale={{ emptyText: "Chưa có buổi học nào." }}
                 style={{ marginBottom: 8 }}
