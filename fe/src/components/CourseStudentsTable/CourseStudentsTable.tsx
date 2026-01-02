@@ -6,6 +6,7 @@ import { getCourceStudentsApi, addStudentToCourceApi, removeStudentFromCourceApi
 import { getStudentsApi } from "src/apis/student.api"
 import type { CourceStudent } from "src/@types/cource"
 import type { UserListItem } from "src/apis/user.api"
+import dayjs from "dayjs"
 
 interface CourseStudentsTableProps {
   courceId: number | undefined
@@ -152,10 +153,16 @@ function CourseStudentsTable({
         key: "email"
       },
       {
+        title: "Ngày sinh",
+        dataIndex: "dateOfBirth",
+        key: "dateOfBirth",
+        render: (dateOfBirth: string) => dateOfBirth ? dayjs(dateOfBirth).format("DD/MM/YYYY") : "N/A"
+      },
+      {
         title: "Số điện thoại",
         dataIndex: "phoneNumber",
         key: "phoneNumber",
-        render: (phone: string) => phone || "N/A"
+        render: (phoneNumber: string) => phoneNumber || ""
       }
     ]
 

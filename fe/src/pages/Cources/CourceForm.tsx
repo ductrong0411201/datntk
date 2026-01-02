@@ -6,7 +6,7 @@ import { getSubjectsApi, type Subject } from "src/apis/subject.api"
 import { getTeachersApi, type UserListItem } from "src/apis/user.api"
 import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStudentsTable"
 import { message, Form, Input, Select, InputNumber, DatePicker, TimePicker, Button, Card, Typography, Row, Col, Table, Modal } from "antd"
-import { ArrowLeftOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons"
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
@@ -236,22 +236,11 @@ function CourceForm() {
   const lessonColumns = getLessonColumns()
   const displayLessons = isEditMode ? getUniqueLessons(lessons) : lessons
 
-  const handleCancel = () => {
-    navigate(PATH.COURSES.url)
-  }
-
   return (
     <MainLayout>
       <Card style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
         <div style={{ marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={handleCancel}
-              style={{ marginBottom: 16 }}
-            >
-              Quay lại
-            </Button>
             <Title level={2} style={{ margin: 0 }}>
               {isEditMode ? "Sửa khóa học" : "Thêm khóa học mới"}
             </Title>

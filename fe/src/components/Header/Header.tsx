@@ -32,8 +32,17 @@ const Header = (props: Props) => {
 
   const getCurrentPageName = () => {
     const currentPath = location.pathname
-    const pathEntry = Object.values(PATH).find(p => p.url === currentPath)
-    return pathEntry?.name || "Trang chủ"
+    
+    const exactMatch = Object.values(PATH).find(p => p.url === currentPath)
+    if (exactMatch) {
+      return exactMatch.name
+    }
+    
+    if (currentPath.startsWith(PATH.COURSES.url)) {
+      return PATH.COURSES.name
+    }
+    
+    return "Trang chủ"
   }
 
   const handleLogout = () => {
