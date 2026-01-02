@@ -5,7 +5,6 @@ import { HomeOutlined, SafetyOutlined, UserOutlined, BookOutlined, CreditCardOut
 import { PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { hasPageAccess } from "src/utils/permission"
-import hustLogo from "src/assets/images/hust-logo.jpg"
 import { SideNavWrapper, LogoWrapper } from "./SideNav.styles"
 
 const { Sider } = Layout

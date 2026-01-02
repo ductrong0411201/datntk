@@ -1,5 +1,6 @@
 const BaseController = require("./BaseController");
-const { Lesson } = require("../models");
+const { Lesson, Subject, User, Cource, Role } = require("../models");
+const { sendSuccess, sendNotFound, sendServerError, sendCreated, sendBadRequest } = require("../utils/response");
 
 class CourceController extends BaseController {
   constructor() {
@@ -11,7 +12,6 @@ class CourceController extends BaseController {
   }
 
   _getListOptions(req) {
-    const { Subject, User } = require("../models");
     return {
       include: [
         {
@@ -30,9 +30,6 @@ class CourceController extends BaseController {
 
   async getById(req, res) {
     try {
-      const { Subject, User } = require("../models");
-      const { sendSuccess, sendNotFound, sendServerError } = require("../utils/response");
-      
       const cource = await this.Model.findByPk(req.params.id, {
         include: [
           {
@@ -67,8 +64,6 @@ class CourceController extends BaseController {
 
   async create(req, res) {
     try {
-      const { sendCreated, sendBadRequest } = require("../utils/response");
-      const { Cource } = require("../models");
       const { 
         name, 
         subject_id, 
@@ -99,12 +94,12 @@ class CourceController extends BaseController {
       const createdCource = await Cource.findByPk(cource.id, {
         include: [
           {
-            model: require("../models").Subject,
+            model: Subject,
             as: "subject",
             attributes: ["id", "name"]
           },
           {
-            model: require("../models").User,
+            model: User,
             as: "teacher",
             attributes: ["id", "name", "userName", "email"]
           }
@@ -113,7 +108,6 @@ class CourceController extends BaseController {
 
       return sendCreated(res, createdCource, "Tạo khóa học thành công");
     } catch (err) {
-      const { sendBadRequest } = require("../utils/response");
       return sendBadRequest(res, err.message || "Dữ liệu không hợp lệ");
     }
   }
@@ -167,6 +161,86 @@ class CourceController extends BaseController {
 
     if (lessons.length > 0) {
       await Lesson.bulkCreate(lessons);
+    }
+  }
+
+  async getStudents(req, res) {
+    try {
+      const cource = await this.Model.findByPk(req.params.id);
+      if (!cource) {
+        return sendNotFound(res, "Không tìm thấy khóa học");
+      }
+
+      const studentRole = await Role.findOne({ where: { code: "hocsinh" } });
+      if (!studentRole) {
+        return sendSuccess(res, [], "Lấy danh sách học sinh thành công");
+      }
+
+      const students = await cource.getStudents({
+        where: { role: studentRole.id },
+        attributes: ["id", "name", "userName", "email", "phoneNumber", "address", "dateOfBirth"],
+        through: { attributes: [] }
+      });
+
+      return sendSuccess(res, students, "Lấy danh sách học sinh thành công");
+    } catch (err) {
+      console.error(err.message);
+      return sendServerError(res, "Lỗi máy chủ");
+    }
+  }
+
+  async addStudent(req, res) {
+    try {
+      const { student_id } = req.body;
+      
+      if (!student_id) {
+        return sendBadRequest(res, "student_id là bắt buộc");
+      }
+
+      const cource = await this.Model.findByPk(req.params.id);
+      if (!cource) {
+        return sendNotFound(res, "Không tìm thấy khóa học");
+      }
+
+      const { User } = require("../models");
+      const student = await User.findByPk(student_id);
+      if (!student) {
+        return sendNotFound(res, "Không tìm thấy học sinh");
+      }
+
+      const students = await cource.getStudents({ where: { id: student_id } });
+      if (students.length > 0) {
+        return sendBadRequest(res, "Học sinh đã có trong khóa học");
+      }
+
+      await cource.addStudent(student_id);
+
+      const updatedStudent = await User.findByPk(student_id, {
+        attributes: ["id", "name", "userName", "email", "phoneNumber", "address", "dateOfBirth"]
+      });
+
+      return sendSuccess(res, updatedStudent, "Thêm học sinh vào khóa học thành công");
+    } catch (err) {
+      console.error(err.message);
+      return sendServerError(res, err.message || "Lỗi máy chủ");
+    }
+  }
+
+  async removeStudent(req, res) {
+    try {
+      const { student_id } = req.params;
+      
+      const cource = await this.Model.findByPk(req.params.id);
+      if (!cource) {
+        return sendNotFound(res, "Không tìm thấy khóa học");
+      }
+
+      await cource.removeStudent(student_id);
+
+      return sendSuccess(res, null, "Xóa học sinh khỏi khóa học thành công");
+    } catch (err) {
+      console.error(err.message);
+      return sendServerError(res, "Lỗi máy chủ");
     }
   }
 }

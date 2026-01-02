@@ -4,6 +4,7 @@ import MainLayout from "src/layouts/MainLayout"
 import { createCourceApi, updateCourceApi, getCourceByIdApi } from "src/apis/cource.api"
 import { getSubjectsApi, type Subject } from "src/apis/subject.api"
 import { getTeachersApi, type UserListItem } from "src/apis/user.api"
+import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStudentsTable"
 import { message, Form, Input, Select, InputNumber, DatePicker, TimePicker, Button, Card, Typography, Row, Col, Table, Modal } from "antd"
 import { ArrowLeftOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
@@ -110,7 +111,7 @@ function CourceForm() {
         await updateCourceApi(Number(id), updateData)
         message.success("Cập nhật khóa học thành công")
       } else {
-        
+
         const createData = {
           ...values,
           start_date: values.start_date.format("YYYY-MM-DD"),
@@ -257,7 +258,7 @@ function CourceForm() {
           disabled={loadingData}
         >
           <Row gutter={16}>
-            <Col span={6}>
+            <Col span={12}>
               <Form.Item
                 name="name"
                 label="Tên khóa học"
@@ -299,6 +300,10 @@ function CourceForm() {
               </Form.Item>
             </Col>
 
+
+          </Row>
+
+          <Row gutter={16}>
             <Col span={6}>
               <Form.Item
                 name="grade"
@@ -308,9 +313,6 @@ function CourceForm() {
                 <InputNumber placeholder="Nhập khối lớp" style={{ width: "100%" }} min={1} max={12} size="large" />
               </Form.Item>
             </Col>
-          </Row>
-
-          <Row gutter={16}>
             <Col span={6}>
               <Form.Item
                 name="start_date"
@@ -363,34 +365,34 @@ function CourceForm() {
           </Row>
           <Row gutter={16}>
             <Col span={24}>
-              <div style={{ marginBottom: 8 }}>
-                <span style={{ fontWeight: 500 }}>Danh sách buổi học</span>
-              </div>
-              <div style={{ position: "relative" }}>
+              <div style={{ marginTop: 16, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontWeight: 500, fontSize: 16 }}>Danh sách buổi học</span>
                 {!isEditMode && (
                   <Button
                     type="primary"
                     shape="circle"
                     icon={<PlusOutlined />}
                     onClick={handleAddLesson}
-                    style={{
-                      position: "absolute",
-                      top: -8,
-                      right: 0,
-                      zIndex: 1
-                    }}
                   />
                 )}
-                <Table
-                  columns={lessonColumns}
-                  dataSource={lessons}
-                  rowKey="id"
-                  pagination={false}
-                  locale={{ emptyText: "Chưa có buổi học nào." }}
-                />
               </div>
+              <Table
+                columns={lessonColumns}
+                dataSource={lessons}
+                rowKey="id"
+                pagination={false}
+                locale={{ emptyText: "Chưa có buổi học nào." }}
+                style={{ marginBottom: 8 }}
+              />
             </Col>
           </Row>
+          {(
+            <Row gutter={16}>
+              <Col span={24}>
+                <CourseStudentsTable courceId={id ? Number(id) : undefined} />
+              </Col>
+            </Row>
+          )}
         </Form>
 
         <Modal
@@ -437,7 +439,7 @@ function CourceForm() {
           </Form>
         </Modal>
       </Card>
-    </MainLayout>
+    </MainLayout >
   )
 }
 

@@ -1,76 +1,5 @@
 import { apiClient } from "./base.api"
-
-export interface Lesson {
-  id: number
-  name: string
-  start: string
-  end: string
-}
-
-export interface Cource {
-  id: number
-  name: string
-  subject_id: number
-  grade: number
-  start_date: string
-  end_date: string
-  description?: string
-  teacher_id: number
-  price: number
-  createdAt?: string
-  updatedAt?: string
-  subject?: {
-    id: number
-    name: string
-  }
-  teacher?: {
-    id: number
-    name: string
-    userName: string
-    email: string
-  }
-  lessons?: Lesson[]
-}
-
-export interface CourceListResponse {
-  status: number
-  data: {
-    items: Cource[]
-    meta: {
-      page: number
-      limit: number
-      total: number
-      totalPages: number
-    }
-  }
-  message: string
-}
-
-export interface CourceResponse {
-  status: number
-  data: Cource
-  message: string
-}
-
-export interface LessonConfig {
-  id?: string
-  name?: string
-  dayOfWeek: number
-  startTime: string
-  endTime: string
-}
-
-export interface CreateCourceData {
-  name: string
-  subject_id: number
-  grade: number
-  start_date: string
-  end_date: string
-  description?: string
-  teacher_id: number
-  price: number
-  lessonDays: LessonConfig[]
-}
+import type { CourceStudent, Cource, CourceListResponse, CourceResponse, CreateCourceData } from "../@types/cource"
 
 export const getCourcesApi = async (
   page: number = 1,
@@ -143,5 +72,35 @@ export const deleteCourceApi = async (id: number): Promise<void> => {
   }
 
   throw new Error(response?.message || "Xóa khóa học thất bại")
+}
+
+export const getCourceStudentsApi = async (courceId: number): Promise<CourceStudent[]> => {
+  const response = await apiClient.get<{ status: number; data: CourceStudent[]; message: string }>(`/cources/${courceId}/students`)
+
+  if (response?.status === 200 && response?.data) {
+    return response.data
+  }
+
+  throw new Error(response?.message || "Lấy danh sách học sinh thất bại")
+}
+
+export const addStudentToCourceApi = async (courceId: number, studentId: number): Promise<CourceStudent> => {
+  const response = await apiClient.post<{ status: number; data: CourceStudent; message: string }>(`/cources/${courceId}/students`, { student_id: studentId })
+
+  if (response?.status === 200 && response?.data) {
+    return response.data
+  }
+
+  throw new Error(response?.message || "Thêm học sinh vào khóa học thất bại")
+}
+
+export const removeStudentFromCourceApi = async (courceId: number, studentId: number): Promise<void> => {
+  const response = await apiClient.delete<{ status: number; message: string }>(`/cources/${courceId}/students/${studentId}`)
+
+  if (response?.status === 200) {
+    return
+  }
+
+  throw new Error(response?.message || "Xóa học sinh khỏi khóa học thất bại")
 }
 

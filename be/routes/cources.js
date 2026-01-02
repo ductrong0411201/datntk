@@ -11,5 +11,9 @@ router.post("/cources", auth, checkPermission(RESOURCE_TYPES.COURSE, "CREATE"), 
 router.put("/cources/:id", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courceController.update);
 router.delete("/cources/:id", auth, checkPermission(RESOURCE_TYPES.COURSE, "DELETE"), courceController.remove);
 
+router.get("/cources/:id/students", auth, checkPermission(RESOURCE_TYPES.COURSE, "READ"), courceController.getStudents);
+router.post("/cources/:id/students", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courceController.addStudent);
+router.delete("/cources/:id/students/:student_id", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courceController.removeStudent);
+
 module.exports = router;
 
