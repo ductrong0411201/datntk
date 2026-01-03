@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('cources', {
+    await queryInterface.createTable('courses', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -52,10 +52,10 @@ module.exports = {
       },
     });
 
-    await queryInterface.addConstraint('cources', {
+    await queryInterface.addConstraint('courses', {
       fields: ['subject_id'],
       type: 'foreign key',
-      name: 'fk_cources_subject_id_subjects_id',
+      name: 'fk_courses_subject_id_subjects_id',
       references: {
         table: 'subjects',
         field: 'id',
@@ -66,8 +66,8 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('cources', 'fk_cources_subject_id_subjects_id');
-    await queryInterface.dropTable('cources');
+    await queryInterface.removeConstraint('courses', 'fk_courses_subject_id_subjects_id');
+    await queryInterface.dropTable('courses');
   }
 };
 

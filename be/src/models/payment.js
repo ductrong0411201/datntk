@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Payment.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
       Payment.belongsTo(models.PaymentMethod, { foreignKey: "payment_method_id", as: "paymentMethod" });
-      Payment.belongsTo(models.Cource, { foreignKey: "course_id", as: "course" });
+      Payment.belongsTo(models.Course, { foreignKey: "course_id", as: "course" });
     }
   }
   Payment.init(

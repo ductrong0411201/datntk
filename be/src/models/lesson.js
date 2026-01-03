@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Lesson extends Model {
     static associate(models) {
-      Lesson.belongsTo(models.Cource, { foreignKey: "cource_id", as: "cource" });
+      Lesson.belongsTo(models.Course, { foreignKey: "course_id", as: "course" });
       Lesson.hasMany(models.Document, { foreignKey: "lessonn_id", as: "documents" });
     }
   }
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      cource_id: {
+      course_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

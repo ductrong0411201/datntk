@@ -6,10 +6,10 @@ import PermissionGuard from "src/guards/PermissionGuard"
 import { ADMIN_PATH } from "src/constants/paths"
 import Loading from "src/components/Loading/Loading"
 
-const Cources = lazy(() => import("src/pages/Cources/Cources"))
-const CourceForm = lazy(() => import("src/pages/Cources/CourceForm"))
+const Courses = lazy(() => import("src/pages/Courses/Courses"))
+const CourseForm = lazy(() => import("src/pages/Courses/CourseForm"))
 
-export const courcesRoutes = (
+export const coursesRoutes = (
   <Fragment>
     <Route
       path={ADMIN_PATH.COURSES.url}
@@ -18,7 +18,7 @@ export const courcesRoutes = (
           <AdminGuard>
             <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
               <Suspense fallback={<Loading />}>
-                <Cources />
+                <Courses />
               </Suspense>
             </PermissionGuard>
           </AdminGuard>
@@ -32,7 +32,7 @@ export const courcesRoutes = (
           <AdminGuard>
             <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
               <Suspense fallback={<Loading />}>
-                <CourceForm />
+                <CourseForm />
               </Suspense>
             </PermissionGuard>
           </AdminGuard>
@@ -46,7 +46,7 @@ export const courcesRoutes = (
           <AdminGuard>
             <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
               <Suspense fallback={<Loading />}>
-                <CourceForm />
+                <CourseForm />
               </Suspense>
             </PermissionGuard>
           </AdminGuard>

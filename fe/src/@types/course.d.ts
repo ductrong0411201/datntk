@@ -5,7 +5,7 @@ export interface Lesson {
   end: string
 }
 
-export interface CourceStudent {
+export interface CourseStudent {
   id: number
   name: string
   userName: string
@@ -15,7 +15,7 @@ export interface CourceStudent {
   dateOfBirth?: string
 }
 
-export interface Cource {
+export interface Course {
   id: number
   name: string
   subject_id: number
@@ -40,10 +40,10 @@ export interface Cource {
   lessons?: Lesson[]
 }
 
-export interface CourceListResponse {
+export interface CourseListResponse {
   status: number
   data: {
-    items: Cource[]
+    items: Course[]
     meta: {
       page: number
       limit: number
@@ -54,9 +54,9 @@ export interface CourceListResponse {
   message: string
 }
 
-export interface CourceResponse {
+export interface CourseResponse {
   status: number
-  data: Cource
+  data: Course
   message: string
 }
 
@@ -68,7 +68,7 @@ export interface LessonConfig {
   endTime: string
 }
 
-export interface CreateCourceData {
+export interface CreateCourseData {
   name: string
   subject_id: number
   grade: number

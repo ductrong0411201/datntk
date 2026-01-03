@@ -3,14 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('cource_student', {
+    await queryInterface.createTable('course_student', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      cource_id: {
+      course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -28,22 +28,22 @@ module.exports = {
       },
     });
 
-    await queryInterface.addConstraint('cource_student', {
-      fields: ['cource_id'],
+    await queryInterface.addConstraint('course_student', {
+      fields: ['course_id'],
       type: 'foreign key',
-      name: 'fk_cource_student_cource_id_cources_id',
+      name: 'fk_course_student_course_id_courses_id',
       references: {
-        table: 'cources',
+        table: 'courses',
         field: 'id',
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
 
-    await queryInterface.addConstraint('cource_student', {
+    await queryInterface.addConstraint('course_student', {
       fields: ['student_id'],
       type: 'foreign key',
-      name: 'fk_cource_student_student_id_users_id',
+      name: 'fk_course_student_student_id_users_id',
       references: {
         table: 'users',
         field: 'id',
@@ -52,17 +52,17 @@ module.exports = {
       onDelete: 'CASCADE',
     });
 
-    await queryInterface.addIndex('cource_student', ['cource_id', 'student_id'], {
+    await queryInterface.addIndex('course_student', ['course_id', 'student_id'], {
       unique: true,
-      name: 'unique_cource_student',
+      name: 'unique_course_student',
     });
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.removeIndex('cource_student', 'unique_cource_student');
-    await queryInterface.removeConstraint('cource_student', 'fk_cource_student_student_id_users_id');
-    await queryInterface.removeConstraint('cource_student', 'fk_cource_student_cource_id_cources_id');
-    await queryInterface.dropTable('cource_student');
+    await queryInterface.removeIndex('course_student', 'unique_course_student');
+    await queryInterface.removeConstraint('course_student', 'fk_course_student_student_id_users_id');
+    await queryInterface.removeConstraint('course_student', 'fk_course_student_course_id_courses_id');
+    await queryInterface.dropTable('course_student');
   }
 };
 

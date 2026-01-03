@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.belongsTo(models.Role, { foreignKey: "role", as: "roleDetail" });
       User.belongsTo(models.Subject, { foreignKey: "subject_id", as: "subject" });
-      User.hasMany(models.Cource, { foreignKey: "teacher_id", as: "taughtCources" });
-      User.belongsToMany(models.Cource, {
-        through: "cource_student",
+      User.hasMany(models.Course, { foreignKey: "teacher_id", as: "taughtCourses" });
+      User.belongsToMany(models.Course, {
+        through: "course_student",
         foreignKey: "student_id",
-        otherKey: "cource_id",
-        as: "enrolledCources",
+        otherKey: "course_id",
+        as: "enrolledCourses",
       });
       User.hasMany(models.Document, { foreignKey: "user_id", as: "documents" });
       User.hasMany(models.Question, { foreignKey: "user_id", as: "questions" });

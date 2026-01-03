@@ -2,15 +2,15 @@ import { useState, useEffect } from "react"
 import { Button, Table, Modal, Form, Select, message } from "antd"
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
-import { getCourceStudentsApi, addStudentToCourceApi, removeStudentFromCourceApi } from "src/apis/cource.api"
+import { getCourseStudentsApi, addStudentToCourseApi, removeStudentFromCourseApi } from "src/apis/course.api"
 import { getUsersApi } from "src/apis/user.api"
-import type { CourceStudent } from "src/@types/cource"
+import type { CourseStudent } from "src/@types/course"
 import type { UserListItem } from "src/@types/user"
 import dayjs from "dayjs"
 import { TitleWrapper, TitleText } from "./CourseStudentsTable.styles"
 
 interface CourseStudentsTableProps {
-  courceId: number | undefined
+  courseId: number | undefined
   title?: string
   readOnly?: boolean
   canEdit?: boolean
@@ -19,7 +19,7 @@ interface CourseStudentsTableProps {
 }
 
 function CourseStudentsTable({ 
-  courceId, 
+  courseId, 
   title = "Danh sách học sinh",
   readOnly = false,
   canEdit = true,
@@ -29,7 +29,7 @@ function CourseStudentsTable({
   const canModify = !readOnly && canEdit
   const shouldShowAddButton = canModify && showAddButton
   const shouldShowActions = canModify && showActions
-  const [students, setStudents] = useState<CourceStudent[]>([])
+  const [students, setStudents] = useState<CourseStudent[]>([])
   const [allStudents, setAllStudents] = useState<UserListItem[]>([])
   const [isStudentModalVisible, setIsStudentModalVisible] = useState(false)
   const [studentForm] = Form.useForm()
@@ -40,10 +40,10 @@ function CourseStudentsTable({
   })
 
   useEffect(() => {
-    if (courceId) {
+    if (courseId) {
       loadStudents()
     }
-  }, [courceId])
+  }, [courseId])
 
   useEffect(() => {
     if (shouldShowAddButton) {
@@ -52,10 +52,10 @@ function CourseStudentsTable({
   }, [shouldShowAddButton])
 
   const loadStudents = async () => {
-    if (!courceId) return
+    if (!courseId) return
     try {
       setLoadingStudents(true)
-      const studentsData = await getCourceStudentsApi(courceId)
+      const studentsData = await getCourseStudentsApi(courseId)
       setStudents(studentsData)
     } catch (error) {
       console.error("Lỗi khi tải danh sách học sinh:", error)
@@ -74,7 +74,7 @@ function CourseStudentsTable({
   }
 
   const handleAddStudent = () => {
-    if (!courceId) {
+    if (!courseId) {
       message.error("Vui lòng lưu khóa học trước khi thêm học sinh")
       return
     }
@@ -85,13 +85,13 @@ function CourseStudentsTable({
   const handleStudentModalOk = async () => {
     try {
       const values = await studentForm.validateFields()
-      if (!courceId) {
+      if (!courseId) {
         message.error("Vui lòng lưu khóa học trước khi thêm học sinh")
         return
       }
 
       setLoadingStudents(true)
-      const newStudent = await addStudentToCourceApi(courceId, values.student_id)
+      const newStudent = await addStudentToCourseApi(courseId, values.student_id)
       setStudents([...students, newStudent])
       setIsStudentModalVisible(false)
       studentForm.resetFields()
@@ -112,7 +112,7 @@ function CourseStudentsTable({
   }
 
   const handleDeleteStudent = async (studentId: number) => {
-    if (!courceId) return
+    if (!courseId) return
 
     Modal.confirm({
       title: "Xác nhận xóa",
@@ -120,7 +120,7 @@ function CourseStudentsTable({
       onOk: async () => {
         try {
           setLoadingStudents(true)
-          await removeStudentFromCourceApi(courceId, studentId)
+          await removeStudentFromCourseApi(courseId, studentId)
           setStudents(students.filter(s => s.id !== studentId))
           message.success("Xóa học sinh khỏi khóa học thành công")
         } catch (error: any) {
@@ -132,8 +132,8 @@ function CourseStudentsTable({
     })
   }
 
-  const getStudentColumns = (): ColumnsType<CourceStudent> => {
-    const columns: ColumnsType<CourceStudent> = [
+  const getStudentColumns = (): ColumnsType<CourseStudent> => {
+    const columns: ColumnsType<CourseStudent> = [
       {
         title: "STT",
         key: "stt",
@@ -171,7 +171,7 @@ function CourseStudentsTable({
       columns.push({
         title: "Thao tác",
         key: "action",
-        render: (_: unknown, record: CourceStudent) => (
+        render: (_: unknown, record: CourseStudent) => (
           <Button
             type="link"
             danger
@@ -190,7 +190,7 @@ function CourseStudentsTable({
 
   const studentColumns = getStudentColumns()
 
-  if (!courceId) {
+  if (!courseId) {
     return null
   }
 

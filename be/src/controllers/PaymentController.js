@@ -10,7 +10,7 @@ class PaymentController extends BaseController {
   }
 
   _getListOptions(req) {
-    const { User, PaymentMethod, Cource } = require("../models");
+    const { User, PaymentMethod, Course } = require("../models");
     return {
       include: [
         {
@@ -24,7 +24,7 @@ class PaymentController extends BaseController {
           attributes: ["id", "name", "description"]
         },
         {
-          model: Cource,
+          model: Course,
           as: "course",
           attributes: ["id", "name", "price"]
         }

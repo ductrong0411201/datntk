@@ -1,10 +1,10 @@
 const BaseController = require("./BaseController");
-const { Lesson, Subject, User, Cource, Role } = require("../models");
+const { Lesson, Subject, User, Course, Role } = require("../models");
 const { sendSuccess, sendNotFound, sendServerError, sendCreated, sendBadRequest } = require("../utils/response");
 
-class CourceController extends BaseController {
+class CourseController extends BaseController {
   constructor() {
-    super("Cource", {
+    super("Course", {
       allowSearch: ["name", "description"],
       allowFilter: ["id", "subject_id", "teacher_id", "grade"],
       allowSort: ["id", "name", "start_date", "end_date", "price", "createdAt", "updatedAt"]
@@ -30,7 +30,7 @@ class CourceController extends BaseController {
 
   async getById(req, res) {
     try {
-      const cource = await this.Model.findByPk(req.params.id, {
+      const course = await this.Model.findByPk(req.params.id, {
         include: [
           {
             model: Subject,
@@ -51,11 +51,11 @@ class CourceController extends BaseController {
         ]
       });
 
-      if (!cource) {
+      if (!course) {
         return sendNotFound(res, "Không tìm thấy");
       }
 
-      return sendSuccess(res, cource, "Lấy thông tin thành công");
+      return sendSuccess(res, course, "Lấy thông tin thành công");
     } catch (err) {
       console.error(err.message);
       return sendServerError(res, "Lỗi máy chủ");
@@ -76,7 +76,7 @@ class CourceController extends BaseController {
         lessonDays
       } = req.body;
 
-      const cource = await Cource.create({
+      const course = await Course.create({
         name,
         subject_id,
         grade,
@@ -88,10 +88,10 @@ class CourceController extends BaseController {
       });
 
       if (lessonDays && Array.isArray(lessonDays) && lessonDays.length > 0) {
-        await this._createLessonsFromArray(cource.id, start_date, end_date, lessonDays);
+        await this._createLessonsFromArray(course.id, start_date, end_date, lessonDays);
       }
 
-      const createdCource = await Cource.findByPk(cource.id, {
+      const createdCourse = await Course.findByPk(course.id, {
         include: [
           {
             model: Subject,
@@ -106,13 +106,13 @@ class CourceController extends BaseController {
         ]
       });
 
-      return sendCreated(res, createdCource, "Tạo khóa học thành công");
+      return sendCreated(res, createdCourse, "Tạo khóa học thành công");
     } catch (err) {
       return sendBadRequest(res, err.message || "Dữ liệu không hợp lệ");
     }
   }
 
-  async _createLessonsFromArray(courceId, startDate, endDate, lessonDaysArray) {
+  async _createLessonsFromArray(courseId, startDate, endDate, lessonDaysArray) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const lessons = [];
@@ -144,7 +144,7 @@ class CourceController extends BaseController {
         const finalLessonName = lessonName || `Buổi ${lessonNumber}`;
 
         lessons.push({
-          cource_id: courceId,
+          course_id: courseId,
           name: finalLessonName,
           start: lessonStart,
           end: lessonEnd,
@@ -166,8 +166,8 @@ class CourceController extends BaseController {
 
   async getStudents(req, res) {
     try {
-      const cource = await Cource.findByPk(req.params.id);
-      if (!cource) {
+      const course = await Course.findByPk(req.params.id);
+      if (!course) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }
 
@@ -176,7 +176,7 @@ class CourceController extends BaseController {
         return sendSuccess(res, [], "Lấy danh sách học sinh thành công");
       }
 
-      const students = await cource.getStudents({
+      const students = await course.getStudents({
         where: { role: studentRole.id },
         attributes: ["id", "name", "userName", "email", "phoneNumber", "address", "dateOfBirth"],
         through: { attributes: [] }
@@ -197,8 +197,8 @@ class CourceController extends BaseController {
         return sendBadRequest(res, "student_id là bắt buộc");
       }
 
-      const cource = await Cource.findByPk(req.params.id);
-      if (!cource) {
+      const course = await Course.findByPk(req.params.id);
+      if (!course) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }
 
@@ -207,12 +207,12 @@ class CourceController extends BaseController {
         return sendNotFound(res, "Không tìm thấy học sinh");
       }
 
-      const students = await cource.getStudents({ where: { id: student_id } });
+      const students = await course.getStudents({ where: { id: student_id } });
       if (students.length > 0) {
         return sendBadRequest(res, "Học sinh đã có trong khóa học");
       }
 
-      await cource.addStudent(student_id);
+      await course.addStudent(student_id);
 
       const updatedStudent = await User.findByPk(student_id, {
         attributes: ["id", "name", "userName", "email", "phoneNumber", "address", "dateOfBirth"]
@@ -229,12 +229,12 @@ class CourceController extends BaseController {
     try {
       const { student_id } = req.params;
 
-      const cource = await Cource.findByPk(req.params.id);
-      if (!cource) {
+      const course = await Course.findByPk(req.params.id);
+      if (!course) {
         return sendNotFound(res, "Không tìm thấy khóa học");
       }
 
-      await cource.removeStudent(student_id);
+      await course.removeStudent(student_id);
 
       return sendSuccess(res, null, "Xóa học sinh khỏi khóa học thành công");
     } catch (err) {
@@ -244,5 +244,5 @@ class CourceController extends BaseController {
   }
 }
 
-module.exports = new CourceController();
+module.exports = new CourseController();
 

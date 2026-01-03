@@ -1,13 +1,13 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class CourceStudent extends Model {
+  class CourseStudent extends Model {
     static associate(models) {
-      CourceStudent.belongsTo(models.Cource, { foreignKey: "cource_id", as: "cource" });
-      CourceStudent.belongsTo(models.User, { foreignKey: "student_id", as: "student" });
+      CourseStudent.belongsTo(models.Course, { foreignKey: "course_id", as: "course" });
+      CourseStudent.belongsTo(models.User, { foreignKey: "student_id", as: "student" });
     }
   }
-  CourceStudent.init(
+  CourseStudent.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      cource_id: {
+      course_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -26,10 +26,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      tableName: "cource_student",
-      modelName: "CourceStudent",
+      tableName: "course_student",
+      modelName: "CourseStudent",
     }
   );
-  return CourceStudent;
+  return CourseStudent;
 };
 

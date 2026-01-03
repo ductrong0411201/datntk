@@ -2,19 +2,19 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getCourcesApi, deleteCourceApi } from "src/apis/cource.api"
-import type { Cource } from "src/@types/cource"
+import { getCoursesApi, deleteCourseApi } from "src/apis/course.api"
+import type { Course } from "src/@types/course"
 import { Modal } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import dayjs from "dayjs"
 import { ADMIN_PATH } from "src/constants/paths"
 
-function Cources() {
+function Courses() {
   const [loading, setLoading] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
   const navigate = useNavigate()
 
-  const columns: ColumnsType<Cource> = [
+  const columns: ColumnsType<Course> = [
     {
       title: "Tên khóa học",
       dataIndex: "name",
@@ -25,13 +25,13 @@ function Cources() {
       title: "Môn học",
       dataIndex: ["subject", "name"],
       key: "subject",
-      render: (_: unknown, record: Cource) => record.subject?.name || "N/A"
+      render: (_: unknown, record: Course) => record.subject?.name || "N/A"
     },
     {
       title: "Giáo viên",
       dataIndex: ["teacher", "name"],
       key: "teacher",
-      render: (_: unknown, record: Cource) => record.teacher?.name || "N/A"
+      render: (_: unknown, record: Course) => record.teacher?.name || "N/A"
     },
     {
       title: "Khối lớp",
@@ -66,7 +66,7 @@ function Cources() {
     navigate(`${ADMIN_PATH.COURSES.url}/new`)
   }
 
-  const handleView = (record: Cource) => {
+  const handleView = (record: Course) => {
     Modal.info({
       title: "Chi tiết khóa học",
       width: 600,
@@ -85,21 +85,21 @@ function Cources() {
     })
   }
 
-  const handleEdit = (record: Cource) => {
+  const handleEdit = (record: Course) => {
     navigate(`${ADMIN_PATH.COURSES.url}/${record.id}/edit`)
   }
 
-  const handleDelete = async (record: Cource): Promise<void> => {
-    await deleteCourceApi(record.id)
+  const handleDelete = async (record: Course): Promise<void> => {
+    await deleteCourseApi(record.id)
     setRefreshKey(prev => prev + 1)
   }
 
   return (
     <MainLayout>
-      <BaseTable<Cource>
+      <BaseTable<Course>
         title="Danh sách khóa học"
         columns={columns}
-        fetchData={getCourcesApi}
+        fetchData={getCoursesApi}
         onAdd={handleAdd}
         onView={handleView}
         onEdit={handleEdit}
@@ -112,5 +112,5 @@ function Cources() {
   )
 }
 
-export default Cources
+export default Courses
 

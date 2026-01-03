@@ -2,10 +2,9 @@ import { useEffect, useState } from "react"
 import { Row, Col, Typography, Badge, Spin } from "antd"
 import Banner from "src/components/Banner/Banner"
 import CourseCard from "src/components/CourseCard/CourseCard"
-import { getCourcesApi } from "src/apis/cource.api"
-import type { Cource } from "src/@types/cource"
+import { getCoursesApi } from "src/apis/course.api"
+import type { Course } from "src/@types/course"
 import { useNavigate } from "react-router-dom"
-import { USER_PATH } from "src/constants/paths"
 import {
   ContentWrapper,
   TitleWrapper,
@@ -16,7 +15,7 @@ import {
 const { Title } = Typography
 
 export default function UserHome() {
-  const [courses, setCourses] = useState<Cource[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
@@ -27,7 +26,7 @@ export default function UserHome() {
   const loadCourses = async () => {
     try {
       setLoading(true)
-      const response = await getCourcesApi(1, 12)
+      const response = await getCoursesApi(1, 12)
       setCourses(response.items || [])
     } catch (error) {
       console.error("Lỗi khi tải khóa học:", error)
@@ -37,7 +36,7 @@ export default function UserHome() {
   }
 
   const handleCourseClick = (courseId: number) => {
-    navigate(`${USER_PATH.COURSES.url}/${courseId}`)
+    navigate(`/courses/${courseId}`)
   }
 
   return (

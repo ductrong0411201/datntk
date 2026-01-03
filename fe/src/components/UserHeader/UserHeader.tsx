@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Layout, Input, Button, Avatar, Dropdown, Space } from "antd"
 import { SearchOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons"
 import { logout } from "src/App/App.thunks"
-import { PATH } from "src/constants/paths"
+import { PATH, USER_PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import type { MenuProps } from "antd"
 import {
@@ -91,8 +91,8 @@ const UserHeader = (props: Props) => {
         top: 0,
         zIndex: 1000
       }}>
-        <HeaderLeft>
-          <LogoContainer>TK</LogoContainer>
+        <HeaderLeft >
+          <LogoContainer onClick={() => navigate(USER_PATH.HOME.url)}>TK</LogoContainer>
           <LogoText>Trung tâm dạy thêm Thế Kiên</LogoText>
         </HeaderLeft>
 

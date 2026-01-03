@@ -12,7 +12,7 @@ const permissionsRouter = require('./routes/permissions');
 const subjectsRouter = require('./routes/subjects');
 const paymentMethodsRouter = require('./routes/paymentMethods');
 const paymentsRouter = require('./routes/payments');
-const courcesRouter = require('./routes/cources');
+const coursesRouter = require('./routes/courses');
 const documentsRouter = require('./routes/documents');
 const app = express();
 
@@ -46,7 +46,7 @@ app.use('/', permissionsRouter);
 app.use('/', subjectsRouter);
 app.use('/', paymentMethodsRouter);
 app.use('/', paymentsRouter);
-app.use('/', courcesRouter);
+app.use('/', coursesRouter);
 app.use('/', documentsRouter);
 
 const { sendError } = require('./src/utils/response');

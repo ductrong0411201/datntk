@@ -73,7 +73,7 @@ export const USER_PATH = {
     name: "Khóa học của tôi"
   } as PathWithResource,
   COURSE_DETAIL: {
-    url: "/my-courses/:id",
+    url: "/courses/:id",
     name: "Chi tiết khóa học"
   } as PathWithoutResource,
 }

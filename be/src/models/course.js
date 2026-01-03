@@ -1,22 +1,22 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Cource extends Model {
+  class Course extends Model {
     static associate(models) {
-      Cource.belongsTo(models.Subject, { foreignKey: "subject_id", as: "subject" });
-      Cource.belongsTo(models.User, { foreignKey: "teacher_id", as: "teacher" });
-      Cource.belongsToMany(models.User, {
-        through: "cource_student",
-        foreignKey: "cource_id",
+      Course.belongsTo(models.Subject, { foreignKey: "subject_id", as: "subject" });
+      Course.belongsTo(models.User, { foreignKey: "teacher_id", as: "teacher" });
+      Course.belongsToMany(models.User, {
+        through: "course_student",
+        foreignKey: "course_id",
         otherKey: "student_id",
         as: "students",
       });
-      Cource.hasMany(models.Lesson, { foreignKey: "cource_id", as: "lessons" });
-      Cource.hasMany(models.Question, { foreignKey: "cource_id", as: "questions" });
-      Cource.hasMany(models.Payment, { foreignKey: "course_id", as: "payments" });
+      Course.hasMany(models.Lesson, { foreignKey: "course_id", as: "lessons" });
+      Course.hasMany(models.Question, { foreignKey: "course_id", as: "questions" });
+      Course.hasMany(models.Payment, { foreignKey: "course_id", as: "payments" });
     }
   }
-  Cource.init(
+  Course.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -56,10 +56,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      tableName: "cources",
-      modelName: "Cource",
+      tableName: "courses",
+      modelName: "Course",
     }
   );
-  return Cource;
+  return Course;
 };
 

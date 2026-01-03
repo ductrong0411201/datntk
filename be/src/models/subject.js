@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Subject extends Model {
     static associate(models) {
       Subject.hasMany(models.User, { foreignKey: "subject_id", as: "users" });
-      Subject.hasMany(models.Cource, { foreignKey: "subject_id", as: "cources" });
+      Subject.hasMany(models.Course, { foreignKey: "subject_id", as: "courses" });
     }
   }
   Subject.init(

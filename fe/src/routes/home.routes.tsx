@@ -7,6 +7,7 @@ import { ADMIN_PATH, USER_PATH } from "src/constants/paths"
 import Loading from "src/components/Loading/Loading"
 
 const Home = lazy(() => import("src/pages/Home/Home"))
+const CourseDetail = lazy(() => import("src/pages/Courses/CourseDetail"))
 
 export const homeRoutes = (
   <Fragment>
@@ -29,6 +30,18 @@ export const homeRoutes = (
           <UserGuard>
             <Suspense fallback={<Loading />}>
               <Home />
+            </Suspense>
+          </UserGuard>
+        </AuthenticatedGuard>
+      }
+    />
+    <Route
+      path="/courses/:id"
+      element={
+        <AuthenticatedGuard>
+          <UserGuard>
+            <Suspense fallback={<Loading />}>
+              <CourseDetail />
             </Suspense>
           </UserGuard>
         </AuthenticatedGuard>

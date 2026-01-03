@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     static associate(models) {
       Question.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
-      Question.belongsTo(models.Cource, { foreignKey: "cource_id", as: "cource" });
+      Question.belongsTo(models.Course, { foreignKey: "course_id", as: "course" });
       Question.hasMany(models.Answer, { foreignKey: "question_id", as: "answers" });
     }
   }
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      cource_id: {
+      course_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import MainLayout from "src/layouts/MainLayout"
-import { createCourceApi, updateCourceApi, getCourceByIdApi } from "src/apis/cource.api"
+import { createCourseApi, updateCourseApi, getCourseByIdApi } from "src/apis/course.api"
 import { getSubjectsApi } from "src/apis/subject.api"
 import { getUsersApi } from "src/apis/user.api"
 import type { Subject } from "src/@types/subject"
@@ -12,7 +12,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { ADMIN_PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
-import { HeaderWrapper, LessonsHeader, LessonsTitle } from "./CourceForm.styles"
+import { HeaderWrapper, LessonsHeader, LessonsTitle } from "./CourseForm.styles"
 
 const { Title } = Typography
 
@@ -35,7 +35,7 @@ interface LessonItem {
   date?: string // Ngày học (chỉ có khi load từ database)
 }
 
-function CourceForm() {
+function CourseForm() {
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const { id } = useParams<{ id?: string }>()
@@ -60,21 +60,21 @@ function CourceForm() {
         setTeachers(teachersData.items)
 
         if (id) {
-          const courceData = await getCourceByIdApi(Number(id))
+          const courseData = await getCourseByIdApi(Number(id))
           form.setFieldsValue({
-            name: courceData.name,
-            subject_id: courceData.subject_id,
-            teacher_id: courceData.teacher_id,
-            grade: courceData.grade,
-            start_date: dayjs(courceData.start_date),
-            end_date: dayjs(courceData.end_date),
-            price: courceData.price,
-            description: courceData.description
+            name: courseData.name,
+            subject_id: courseData.subject_id,
+            teacher_id: courseData.teacher_id,
+            grade: courseData.grade,
+            start_date: dayjs(courseData.start_date),
+            end_date: dayjs(courseData.end_date),
+            price: courseData.price,
+            description: courseData.description
           })
 
           // Load và convert lessons từ database sang format LessonItem
-          if (courceData.lessons && courceData.lessons.length > 0) {
-            const lessonItems: LessonItem[] = courceData.lessons.map(lesson => ({
+          if (courseData.lessons && courseData.lessons.length > 0) {
+            const lessonItems: LessonItem[] = courseData.lessons.map(lesson => ({
               id: lesson.id.toString(),
               name: lesson.name,
               dayOfWeek: dayjs(lesson.start).day(),
@@ -111,7 +111,7 @@ function CourceForm() {
           start_date: values.start_date.format("YYYY-MM-DD"),
           end_date: values.end_date.format("YYYY-MM-DD")
         }
-        await updateCourceApi(Number(id), updateData)
+        await updateCourseApi(Number(id), updateData)
         message.success("Cập nhật khóa học thành công")
       } else {
 
@@ -121,7 +121,7 @@ function CourceForm() {
           end_date: values.end_date.format("YYYY-MM-DD"),
           lessonDays: lessons,
         }
-        await createCourceApi(createData)
+        await createCourseApi(createData)
         message.success("Tạo khóa học thành công")
       }
 
@@ -399,7 +399,7 @@ function CourceForm() {
           {(
             <Row gutter={16}>
               <Col span={24}>
-                <CourseStudentsTable courceId={id ? Number(id) : undefined} />
+                <CourseStudentsTable courseId={id ? Number(id) : undefined} />
               </Col>
             </Row>
           )}
@@ -453,5 +453,5 @@ function CourceForm() {
   )
 }
 
-export default CourceForm
+export default CourseForm
 

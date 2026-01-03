@@ -71,9 +71,9 @@ module.exports = {
     await queryInterface.addConstraint('payments', {
       fields: ['course_id'],
       type: 'foreign key',
-      name: 'fk_payments_course_id_cources_id',
+      name: 'fk_payments_course_id_courses_id',
       references: {
-        table: 'cources',
+        table: 'courses',
         field: 'id',
       },
       onUpdate: 'CASCADE',
@@ -82,7 +82,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('payments', 'fk_payments_course_id_cources_id');
+    await queryInterface.removeConstraint('payments', 'fk_payments_course_id_courses_id');
     await queryInterface.removeConstraint('payments', 'fk_payments_payment_method_id_payment_methods_id');
     await queryInterface.removeConstraint('payments', 'fk_payments_user_id_users_id');
     await queryInterface.dropTable('payments');

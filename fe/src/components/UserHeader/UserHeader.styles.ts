@@ -40,6 +40,7 @@ export const LogoContainer = styled.div`
   color: #fff;
   font-weight: bold;
   font-size: 18px;
+  cursor: pointer;
 `
 
 export const LogoText = styled.span`

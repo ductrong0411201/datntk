@@ -1,14 +1,14 @@
 import { apiClient } from "./base.api"
-import type { CourceStudent, Cource, CourceListResponse, CourceResponse, CreateCourceData } from "../@types/cource"
+import type { CourseStudent, Course, CourseListResponse, CourseResponse, CreateCourseData } from "../@types/course"
 
-export const getCourcesApi = async (
+export const getCoursesApi = async (
   page: number = 1,
   limit: number = 10,
   sortBy?: string,
   sortOrder?: "ASC" | "DESC",
   search?: string,
   filters?: Record<string, any>
-): Promise<CourceListResponse["data"]> => {
+): Promise<CourseListResponse["data"]> => {
   const params: any = { page, limit }
   if (sortBy) {
     params.sortBy = sortBy
@@ -25,7 +25,7 @@ export const getCourcesApi = async (
     })
   }
   
-  const response = await apiClient.get<CourceListResponse>("/cources", { params })
+  const response = await apiClient.get<CourseListResponse>("/courses", { params })
 
   if (response?.status === 200 && response?.data) {
     return response.data
@@ -34,8 +34,8 @@ export const getCourcesApi = async (
   throw new Error(response?.message || "Lấy danh sách khóa học thất bại")
 }
 
-export const getCourceByIdApi = async (id: number): Promise<Cource> => {
-  const response = await apiClient.get<CourceResponse>(`/cources/${id}`)
+export const getCourseByIdApi = async (id: number): Promise<Course> => {
+  const response = await apiClient.get<CourseResponse>(`/courses/${id}`)
 
   if (response?.status === 200 && response?.data) {
     return response.data
@@ -44,8 +44,8 @@ export const getCourceByIdApi = async (id: number): Promise<Cource> => {
   throw new Error(response?.message || "Lấy thông tin khóa học thất bại")
 }
 
-export const createCourceApi = async (data: CreateCourceData): Promise<Cource> => {
-  const response = await apiClient.post<CourceResponse>("/cources", data)
+export const createCourseApi = async (data: CreateCourseData): Promise<Course> => {
+  const response = await apiClient.post<CourseResponse>("/courses", data)
 
   if (response?.status === 201 && response?.data) {
     return response.data
@@ -54,8 +54,8 @@ export const createCourceApi = async (data: CreateCourceData): Promise<Cource> =
   throw new Error(response?.message || "Tạo khóa học thất bại")
 }
 
-export const updateCourceApi = async (id: number, data: Partial<Omit<Cource, "id" | "createdAt" | "updatedAt" | "subject" | "teacher">>): Promise<Cource> => {
-  const response = await apiClient.put<CourceResponse>(`/cources/${id}`, data)
+export const updateCourseApi = async (id: number, data: Partial<Omit<Course, "id" | "createdAt" | "updatedAt" | "subject" | "teacher">>): Promise<Course> => {
+  const response = await apiClient.put<CourseResponse>(`/courses/${id}`, data)
 
   if (response?.status === 200 && response?.data) {
     return response.data
@@ -64,8 +64,8 @@ export const updateCourceApi = async (id: number, data: Partial<Omit<Cource, "id
   throw new Error(response?.message || "Cập nhật khóa học thất bại")
 }
 
-export const deleteCourceApi = async (id: number): Promise<void> => {
-  const response = await apiClient.delete<{ status: number; message: string }>(`/cources/${id}`)
+export const deleteCourseApi = async (id: number): Promise<void> => {
+  const response = await apiClient.delete<{ status: number; message: string }>(`/courses/${id}`)
 
   if (response?.status === 200) {
     return
@@ -74,8 +74,8 @@ export const deleteCourceApi = async (id: number): Promise<void> => {
   throw new Error(response?.message || "Xóa khóa học thất bại")
 }
 
-export const getCourceStudentsApi = async (courceId: number): Promise<CourceStudent[]> => {
-  const response = await apiClient.get<{ status: number; data: CourceStudent[]; message: string }>(`/cources/${courceId}/students`)
+export const getCourseStudentsApi = async (courseId: number): Promise<CourseStudent[]> => {
+  const response = await apiClient.get<{ status: number; data: CourseStudent[]; message: string }>(`/courses/${courseId}/students`)
 
   if (response?.status === 200 && response?.data) {
     return response.data
@@ -84,8 +84,8 @@ export const getCourceStudentsApi = async (courceId: number): Promise<CourceStud
   throw new Error(response?.message || "Lấy danh sách học sinh thất bại")
 }
 
-export const addStudentToCourceApi = async (courceId: number, studentId: number): Promise<CourceStudent> => {
-  const response = await apiClient.post<{ status: number; data: CourceStudent; message: string }>(`/cources/${courceId}/students`, { student_id: studentId })
+export const addStudentToCourseApi = async (courseId: number, studentId: number): Promise<CourseStudent> => {
+  const response = await apiClient.post<{ status: number; data: CourseStudent; message: string }>(`/courses/${courseId}/students`, { student_id: studentId })
 
   if (response?.status === 200 && response?.data) {
     return response.data
@@ -94,8 +94,8 @@ export const addStudentToCourceApi = async (courceId: number, studentId: number)
   throw new Error(response?.message || "Thêm học sinh vào khóa học thất bại")
 }
 
-export const removeStudentFromCourceApi = async (courceId: number, studentId: number): Promise<void> => {
-  const response = await apiClient.delete<{ status: number; message: string }>(`/cources/${courceId}/students/${studentId}`)
+export const removeStudentFromCourseApi = async (courseId: number, studentId: number): Promise<void> => {
+  const response = await apiClient.delete<{ status: number; message: string }>(`/courses/${courseId}/students/${studentId}`)
 
   if (response?.status === 200) {
     return

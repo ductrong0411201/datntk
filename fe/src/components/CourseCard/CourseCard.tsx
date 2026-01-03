@@ -1,6 +1,6 @@
 import { Card, Typography, Space } from "antd"
 import { CrownOutlined } from "@ant-design/icons"
-import type { Cource } from "src/@types/cource"
+import type { Course } from "src/@types/course"
 import {
   CourseCardWrapper,
   CoverWrapper,
@@ -12,7 +12,7 @@ import {
 const { Text } = Typography
 
 interface Props {
-  course: Cource
+  course: Course
   onClick?: () => void
 }
 

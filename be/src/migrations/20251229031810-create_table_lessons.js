@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      cource_id: {
+      course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -37,11 +37,11 @@ module.exports = {
     });
 
     await queryInterface.addConstraint('lessons', {
-      fields: ['cource_id'],
+      fields: ['course_id'],
       type: 'foreign key',
-      name: 'fk_lessons_cource_id_cources_id',
+      name: 'fk_lessons_course_id_courses_id',
       references: {
-        table: 'cources',
+        table: 'courses',
         field: 'id',
       },
       onUpdate: 'CASCADE',
@@ -50,7 +50,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('lessons', 'fk_lessons_cource_id_cources_id');
+    await queryInterface.removeConstraint('lessons', 'fk_lessons_course_id_courses_id');
     await queryInterface.dropTable('lessons');
   }
 };

@@ -7,7 +7,7 @@ import { usersRoutes } from "./users.routes"
 import { subjectsRoutes } from "./subjects.routes"
 import { paymentMethodsRoutes } from "./paymentMethods.routes"
 import { paymentsRoutes } from "./payments.routes"
-import { courcesRoutes } from "./cources.routes"
+import { coursesRoutes } from "./courses.routes"
 import { teachersRoutes } from "./teachers.routes"
 import { studentsRoutes } from "./students.routes"
 import { notFoundRoutes } from "./notFound.routes"
@@ -25,7 +25,7 @@ export default function AppRoutes() {
         {subjectsRoutes}
         {paymentMethodsRoutes}
         {paymentsRoutes}
-        {courcesRoutes}
+        {coursesRoutes}
         {teachersRoutes}
         {studentsRoutes}
         {notFoundRoutes}
