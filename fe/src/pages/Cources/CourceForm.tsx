@@ -10,7 +10,7 @@ import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStuden
 import { message, Form, Input, Select, InputNumber, DatePicker, TimePicker, Button, Card, Typography, Row, Col, Table, Modal } from "antd"
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
 
 const { Title } = Typography
@@ -87,7 +87,7 @@ function CourceForm() {
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error)
         message.error("Lỗi khi tải dữ liệu")
-        navigate(PATH.COURSES.url)
+        navigate(ADMIN_PATH.COURSES.url)
       } finally {
         setLoadingData(false)
       }
@@ -124,7 +124,7 @@ function CourceForm() {
         message.success("Tạo khóa học thành công")
       }
 
-      navigate(PATH.COURSES.url)
+      navigate(ADMIN_PATH.COURSES.url)
     } catch (error: any) {
       if (error?.errorFields) {
         return

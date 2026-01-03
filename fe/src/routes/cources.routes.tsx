@@ -1,8 +1,9 @@
 import { lazy, Suspense, Fragment } from "react"
 import { Route } from "react-router-dom"
 import AuthenticatedGuard from "src/guards/AuthenticatedGuard"
+import AdminGuard from "src/guards/AdminGuard"
 import PermissionGuard from "src/guards/PermissionGuard"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH } from "src/constants/paths"
 import Loading from "src/components/Loading/Loading"
 
 const Cources = lazy(() => import("src/pages/Cources/Cources"))
@@ -11,38 +12,44 @@ const CourceForm = lazy(() => import("src/pages/Cources/CourceForm"))
 export const courcesRoutes = (
   <Fragment>
     <Route
-      path={PATH.COURSES.url}
+      path={ADMIN_PATH.COURSES.url}
       element={
         <AuthenticatedGuard>
-          <PermissionGuard resourceType={PATH.COURSES.resourceType}>
-            <Suspense fallback={<Loading />}>
-              <Cources />
-            </Suspense>
-          </PermissionGuard>
+          <AdminGuard>
+            <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
+              <Suspense fallback={<Loading />}>
+                <Cources />
+              </Suspense>
+            </PermissionGuard>
+          </AdminGuard>
         </AuthenticatedGuard>
       }
     />
     <Route
-      path={`${PATH.COURSES.url}/new`}
+      path={`${ADMIN_PATH.COURSES.url}/new`}
       element={
         <AuthenticatedGuard>
-          <PermissionGuard resourceType={PATH.COURSES.resourceType}>
-            <Suspense fallback={<Loading />}>
-              <CourceForm />
-            </Suspense>
-          </PermissionGuard>
+          <AdminGuard>
+            <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
+              <Suspense fallback={<Loading />}>
+                <CourceForm />
+              </Suspense>
+            </PermissionGuard>
+          </AdminGuard>
         </AuthenticatedGuard>
       }
     />
     <Route
-      path={`${PATH.COURSES.url}/:id/edit`}
+      path={`${ADMIN_PATH.COURSES.url}/:id/edit`}
       element={
         <AuthenticatedGuard>
-          <PermissionGuard resourceType={PATH.COURSES.resourceType}>
-            <Suspense fallback={<Loading />}>
-              <CourceForm />
-            </Suspense>
-          </PermissionGuard>
+          <AdminGuard>
+            <PermissionGuard resourceType={ADMIN_PATH.COURSES.resourceType}>
+              <Suspense fallback={<Loading />}>
+                <CourceForm />
+              </Suspense>
+            </PermissionGuard>
+          </AdminGuard>
         </AuthenticatedGuard>
       }
     />

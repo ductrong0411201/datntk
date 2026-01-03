@@ -2,7 +2,7 @@ import { connect, type ConnectedProps } from "react-redux"
 import { logout } from "src/App/App.thunks"
 import { toggleSideNav } from "src/App/App.actions"
 import { useNavigate, useLocation } from "react-router-dom"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH, PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { Button, Layout, Typography, Dropdown, Avatar, Space } from "antd"
 import { MenuOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons"
@@ -33,16 +33,16 @@ const Header = (props: Props) => {
   const getCurrentPageName = () => {
     const currentPath = location.pathname
     
-    const exactMatch = Object.values(PATH).find(p => p.url === currentPath)
-    if (exactMatch) {
-      return exactMatch.name
+    const adminMatch = Object.values(ADMIN_PATH).find(p => p.url === currentPath)
+    if (adminMatch) {
+      return adminMatch.name
     }
     
-    if (currentPath.startsWith(PATH.COURSES.url)) {
-      return PATH.COURSES.name
+    if (currentPath.startsWith(ADMIN_PATH.COURSES.url)) {
+      return ADMIN_PATH.COURSES.name
     }
     
-    return "Trang chủ"
+    return ADMIN_PATH.HOME.name
   }
 
   const handleLogout = () => {

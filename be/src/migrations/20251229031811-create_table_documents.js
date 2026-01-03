@@ -20,7 +20,7 @@ module.exports = {
       },
       lessonn_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       document_type_id: {
         type: Sequelize.INTEGER,

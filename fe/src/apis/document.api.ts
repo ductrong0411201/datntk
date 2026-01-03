@@ -4,7 +4,6 @@ import type { UploadDocumentData, Document, DocumentResponse } from "../@types/d
 export const uploadDocumentApi = async (data: UploadDocumentData): Promise<Document> => {
   const formData = new FormData()
   formData.append("file", data.file)
-  formData.append("user_id", data.user_id.toString())
   formData.append("lesson_id", data.lesson_id.toString())
   formData.append("document_type_id", data.document_type_id.toString())
 

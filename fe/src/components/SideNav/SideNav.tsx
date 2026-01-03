@@ -2,7 +2,7 @@ import { connect, type ConnectedProps } from "react-redux"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Layout, Menu } from "antd"
 import { HomeOutlined, SafetyOutlined, UserOutlined, BookOutlined, CreditCardOutlined, DollarOutlined, FileTextOutlined, TeamOutlined } from "@ant-design/icons"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { hasPageAccess } from "src/utils/permission"
 import { SideNavWrapper, LogoWrapper } from "./SideNav.styles"
@@ -25,58 +25,52 @@ const SideNav = (props: Props) => {
 
   const allMenuItems = [
     {
-      key: PATH.HOME.url,
+      key: ADMIN_PATH.HOME.url,
       icon: <HomeOutlined />,
-      label: PATH.HOME.name,
-      pathKey: "HOME" as keyof typeof PATH
+      label: ADMIN_PATH.HOME.name,
+      pathKey: "HOME" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.ROLES.url,
+      key: ADMIN_PATH.ROLES.url,
       icon: <SafetyOutlined />,
-      label: PATH.ROLES.name,
-      pathKey: "ROLES" as keyof typeof PATH
+      label: ADMIN_PATH.ROLES.name,
+      pathKey: "ROLES" as keyof typeof ADMIN_PATH
     },
-    // {
-    //   key: PATH.USERS.url,
-    //   icon: <UserOutlined />,
-    //   label: PATH.USERS.name,
-    //   pathKey: "USERS" as keyof typeof PATH
-    // },
     {
-      key: PATH.TEACHERS.url,
+      key: ADMIN_PATH.TEACHERS.url,
       icon: <TeamOutlined />,
-      label: PATH.TEACHERS.name,
-      pathKey: "TEACHERS" as keyof typeof PATH
+      label: ADMIN_PATH.TEACHERS.name,
+      pathKey: "TEACHERS" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.STUDENTS.url,
+      key: ADMIN_PATH.STUDENTS.url,
       icon: <UserOutlined />,
-      label: PATH.STUDENTS.name,
-      pathKey: "STUDENTS" as keyof typeof PATH
+      label: ADMIN_PATH.STUDENTS.name,
+      pathKey: "STUDENTS" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.SUBJECTS.url,
+      key: ADMIN_PATH.SUBJECTS.url,
       icon: <BookOutlined />,
-      label: PATH.SUBJECTS.name,
-      pathKey: "SUBJECTS" as keyof typeof PATH
+      label: ADMIN_PATH.SUBJECTS.name,
+      pathKey: "SUBJECTS" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.COURSES.url,
+      key: ADMIN_PATH.COURSES.url,
       icon: <FileTextOutlined />,
-      label: PATH.COURSES.name,
-      pathKey: "COURSES" as keyof typeof PATH
+      label: ADMIN_PATH.COURSES.name,
+      pathKey: "COURSES" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.PAYMENT_METHODS.url,
+      key: ADMIN_PATH.PAYMENT_METHODS.url,
       icon: <CreditCardOutlined />,
-      label: PATH.PAYMENT_METHODS.name,
-      pathKey: "PAYMENT_METHODS" as keyof typeof PATH
+      label: ADMIN_PATH.PAYMENT_METHODS.name,
+      pathKey: "PAYMENT_METHODS" as keyof typeof ADMIN_PATH
     },
     {
-      key: PATH.PAYMENTS.url,
+      key: ADMIN_PATH.PAYMENTS.url,
       icon: <DollarOutlined />,
-      label: PATH.PAYMENTS.name,
-      pathKey: "PAYMENTS" as keyof typeof PATH
+      label: ADMIN_PATH.PAYMENTS.name,
+      pathKey: "PAYMENTS" as keyof typeof ADMIN_PATH
     }
   ]
 
@@ -84,7 +78,7 @@ const SideNav = (props: Props) => {
     if (item.pathKey === "HOME") {
       return true
     }
-    return hasPageAccess(user, item.pathKey)
+    return hasPageAccess(user, item.pathKey, "ADMIN")
   }).map(({ pathKey, ...item }) => item)
 
   const handleMenuClick = ({ key }: { key: string }) => {

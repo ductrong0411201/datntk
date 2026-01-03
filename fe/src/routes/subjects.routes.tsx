@@ -1,22 +1,25 @@
 import { lazy, Suspense } from "react"
 import { Route } from "react-router-dom"
 import AuthenticatedGuard from "src/guards/AuthenticatedGuard"
+import AdminGuard from "src/guards/AdminGuard"
 import PermissionGuard from "src/guards/PermissionGuard"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH } from "src/constants/paths"
 import Loading from "src/components/Loading/Loading"
 
 const Subjects = lazy(() => import("src/pages/Subjects/Subjects"))
 
 export const subjectsRoutes = (
   <Route
-    path={PATH.SUBJECTS.url}
+    path={ADMIN_PATH.SUBJECTS.url}
     element={
       <AuthenticatedGuard>
-        <PermissionGuard resourceType={PATH.SUBJECTS.resourceType}>
-          <Suspense fallback={<Loading />}>
-            <Subjects />
-          </Suspense>
-        </PermissionGuard>
+        <AdminGuard>
+          <PermissionGuard resourceType={ADMIN_PATH.SUBJECTS.resourceType}>
+            <Suspense fallback={<Loading />}>
+              <Subjects />
+            </Suspense>
+          </PermissionGuard>
+        </AdminGuard>
       </AuthenticatedGuard>
     }
   />

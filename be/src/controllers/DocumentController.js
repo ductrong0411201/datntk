@@ -15,13 +15,28 @@ class DocumentController extends BaseController {
         return sendBadRequest(res, "Không có file được upload");
       }
 
-      const { user_id, lesson_id, document_type_id } = req.body;
-
-      if (!user_id || !lesson_id || !document_type_id) {
+      const user_id = req.user?.id;
+      if (!user_id) {
         if (req.file.path) {
           fs.unlinkSync(req.file.path);
         }
-        return sendBadRequest(res, "Thiếu thông tin: user_id, lesson_id, document_type_id là bắt buộc");
+        return sendBadRequest(res, "Không thể xác định người dùng");
+      }
+
+      const { lesson_id, document_type_id } = req.body;
+
+      if (!document_type_id) {
+        if (req.file.path) {
+          fs.unlinkSync(req.file.path);
+        }
+        return sendBadRequest(res, "Thiếu thông tin loại tài liệu");
+      }
+      const documentType = await DocumentType.findByPk(parseInt(document_type_id));
+      if (!documentType) {
+        if (req.file.path) {
+          fs.unlinkSync(req.file.path);
+        }
+        return sendBadRequest(res, "Không tìm thấy loại tài liệu");
       }
 
       const document = await Document.create({

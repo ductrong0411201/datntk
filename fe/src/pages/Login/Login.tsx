@@ -1,14 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { connect, type ConnectedProps as ReduxConnectedProps } from "react-redux"
 import { login } from "./Login.thunks"
 import { useNavigate, Link } from "react-router-dom"
-import { PATH } from "src/constants/paths"
+import { PATH, ADMIN_PATH, USER_PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { LoginContent, LoginWrapper } from "./Login.styles"
 import { Alert, Button, Card, Form, Input, Typography } from "antd"
 
 const mapStateToProps = (state: RootState) => ({
-  loading: state.login.loading
+  loading: state.login.loading,
+  user: state.app.user
 })
 
 const mapDispatchToProps = {
@@ -20,17 +21,25 @@ const connector = connect(mapStateToProps, mapDispatchToProps)
 interface Props extends ReduxConnectedProps<typeof connector> {}
 
 const Login = (props: Props) => {
-  const { login, loading } = props
+  const { login, loading, user } = props
   const [form] = Form.useForm()
   const [error, setError] = useState("")
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      const userRole = user.roleDetail?.code
+      const homePath = (userRole === "admin" || userRole === "quanly") ? ADMIN_PATH.HOME.url : USER_PATH.HOME.url
+      navigate(homePath, { replace: true })
+    }
+  }, [user, navigate])
 
   const submit = (values: ReqLogin) => {
     if (loading) return
     setError("")
     login(values)
-      .then(() => {
-        navigate(PATH.HOME.url, { replace: true })
+      .catch((err: { payload?: { message?: string } }) => {
+        setError(err.payload?.message || "Đăng nhập thất bại")
       })
       .catch((err: { payload?: { message?: string } }) => {
         setError(err.payload?.message || "Đăng nhập thất bại")

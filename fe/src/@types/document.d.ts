@@ -1,6 +1,5 @@
 export interface UploadDocumentData {
   file: File
-  user_id: number
   lesson_id: number
   document_type_id: number
 }

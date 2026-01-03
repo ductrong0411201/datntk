@@ -7,7 +7,7 @@ import type { Cource } from "src/@types/cource"
 import { Modal } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import dayjs from "dayjs"
-import { PATH } from "src/constants/paths"
+import { ADMIN_PATH } from "src/constants/paths"
 
 function Cources() {
   const [loading, setLoading] = useState(false)
@@ -63,7 +63,7 @@ function Cources() {
   ]
 
   const handleAdd = () => {
-    navigate(`${PATH.COURSES.url}/new`)
+    navigate(`${ADMIN_PATH.COURSES.url}/new`)
   }
 
   const handleView = (record: Cource) => {
@@ -86,7 +86,7 @@ function Cources() {
   }
 
   const handleEdit = (record: Cource) => {
-    navigate(`${PATH.COURSES.url}/${record.id}/edit`)
+    navigate(`${ADMIN_PATH.COURSES.url}/${record.id}/edit`)
   }
 
   const handleDelete = async (record: Cource): Promise<void> => {

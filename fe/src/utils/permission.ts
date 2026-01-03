@@ -1,5 +1,5 @@
 import type { User, Permission } from "../@types/user"
-import { PATH } from "../constants/paths"
+import { ADMIN_PATH } from "../constants/paths"
 
 export const checkPermission = (
   user: User | null | undefined,
@@ -18,9 +18,10 @@ export const checkPermission = (
 
 export const hasPageAccess = (
   user: User | null | undefined,
-  pathKey: keyof typeof PATH
+  pathKey: keyof typeof ADMIN_PATH,
+  pathType: "ADMIN" = "ADMIN"
 ): boolean => {
-  const path = PATH[pathKey]
+  const path = ADMIN_PATH[pathKey]
   
   if (!("resourceType" in path)) {
     return true
