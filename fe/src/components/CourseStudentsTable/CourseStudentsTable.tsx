@@ -7,6 +7,7 @@ import { getStudentsApi } from "src/apis/student.api"
 import type { CourceStudent } from "src/@types/cource"
 import type { UserListItem } from "src/@types/user"
 import dayjs from "dayjs"
+import { TitleWrapper, TitleText } from "./CourseStudentsTable.styles"
 
 interface CourseStudentsTableProps {
   courceId: number | undefined
@@ -195,8 +196,8 @@ function CourseStudentsTable({
 
   return (
     <>
-      <div style={{ marginTop: 16, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontWeight: 500, fontSize: 16 }}>{title}</span>
+      <TitleWrapper>
+        <TitleText>{title}</TitleText>
         {shouldShowAddButton && (
           <Button
             type="primary"

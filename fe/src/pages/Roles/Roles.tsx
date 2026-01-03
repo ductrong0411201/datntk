@@ -7,6 +7,7 @@ import type { Role } from "src/@types/role"
 import type { Permission } from "src/@types/permission"
 import { message, Modal, Form, Input, Checkbox, Table, Divider } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { ScrollableContainer } from "./Roles.styles"
 
 function Roles() {
   const [form] = Form.useForm()
@@ -196,7 +197,7 @@ function Roles() {
             label="Quyền truy cập"
           >
             <Checkbox.Group style={{ width: "100%" }}>
-                <div style={{ maxHeight: "400px", overflow: "auto" }}>
+                <ScrollableContainer>
                   <Table
                   dataSource={getResourceTypes().map((resourceType, index) => ({
                     key: index,
@@ -229,7 +230,7 @@ function Roles() {
                   size="small"
                   bordered
                 />
-                </div>
+                </ScrollableContainer>
               </Checkbox.Group>
           </Form.Item>
         </Form>

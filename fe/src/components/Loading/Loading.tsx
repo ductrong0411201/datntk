@@ -1,14 +1,10 @@
 import { Spin } from "antd"
+import { LoadingWrapper } from "./Loading.styles"
 
 export default function Loading() {
   return (
-    <div style={{ 
-      display: "flex", 
-      justifyContent: "center", 
-      alignItems: "center", 
-      minHeight: "100vh" 
-    }}>
+    <LoadingWrapper>
       <Spin size="large" />
-    </div>
+    </LoadingWrapper>
   )
 }

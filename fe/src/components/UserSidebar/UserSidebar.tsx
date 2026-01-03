@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { Layout, Menu } from "antd"
-import { HomeOutlined, BookOutlined, FileTextOutlined } from "@ant-design/icons"
+import { HomeOutlined, BookOutlined } from "@ant-design/icons"
 import { USER_PATH } from "src/constants/paths"
 import { UserSidebarWrapper } from "./UserSidebar.styles"
 
@@ -17,11 +17,6 @@ const menuItems = [
     icon: <BookOutlined />,
     label: USER_PATH.COURSES.name
   },
-  {
-    key: USER_PATH.ARTICLES.url,
-    icon: <FileTextOutlined />,
-    label: USER_PATH.ARTICLES.name
-  }
 ]
 
 const UserSidebar = () => {

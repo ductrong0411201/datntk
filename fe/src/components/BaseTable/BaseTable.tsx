@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react"
 import { Table, Button, Space, Typography, Card, message, Modal, Pagination, Input, Select } from "antd"
 import { ReloadOutlined, PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons"
 import type { TableProps } from "antd/es/table"
-import { BaseTableWrapper } from "./BaseTable.styles"
+import {
+  BaseTableWrapper,
+  TableContainer,
+  HeaderContainer,
+  HeaderTop,
+  FiltersContainer,
+  TableWrapper,
+  PaginationWrapper
+} from "./BaseTable.styles"
 
 const { Title } = Typography
 
@@ -248,12 +256,9 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
   return (
     <BaseTableWrapper>
       <Card>
-        <div ref={tableContainerRef} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          <div 
-            ref={headerRef}
-            style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 16, flexShrink: 0 }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TableContainer ref={tableContainerRef}>
+          <HeaderContainer ref={headerRef}>
+            <HeaderTop>
               <Title level={4} style={{ margin: 0 }}>
                 {title}
               </Title>
@@ -275,8 +280,8 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
                   </Button>
                 )}
               </Space>
-            </div>
-            <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+            </HeaderTop>
+            <FiltersContainer>
               <Search
                 placeholder="Tìm kiếm..."
                 allowClear
@@ -308,9 +313,9 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
                   ))}
                 </>
               )}
-            </div>
-          </div>
-          <div style={{ flex: 1, overflow: "hidden", minHeight: 0, position: "relative" }}>
+            </FiltersContainer>
+          </HeaderContainer>
+          <TableWrapper>
             <Table<T>
               columns={tableColumns}
               dataSource={data}
@@ -320,18 +325,7 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
               onChange={handleTableChange}
               scroll={{ x: "max-content", y: tableHeight }}
             />
-            <div style={{ 
-              position: "absolute", 
-              bottom: 0, 
-              right: 0, 
-              padding: "16px",
-              background: "#fff",
-              borderTop: "1px solid #f0f0f0",
-              width: "100%",
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center"
-            }}>
+            <PaginationWrapper>
               <Pagination
                 current={pagination.current}
                 pageSize={pagination.pageSize}
@@ -353,9 +347,9 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
                   loadData(1, size, sortBy, sortOrder, searchValue || undefined, Object.keys(filters).length > 0 ? filters : undefined)
                 }}
               />
-            </div>
-          </div>
-        </div>
+            </PaginationWrapper>
+          </TableWrapper>
+        </TableContainer>
       </Card>
     </BaseTableWrapper>
   )

@@ -6,7 +6,17 @@ import { logout } from "src/App/App.thunks"
 import { PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import type { MenuProps } from "antd"
-import { UserHeaderWrapper } from "./UserHeader.styles"
+import {
+  UserHeaderWrapper,
+  UserInfoWrapper,
+  UserName,
+  UserUsername,
+  HeaderLeft,
+  LogoContainer,
+  LogoText,
+  SearchContainer,
+  HeaderRight
+} from "./UserHeader.styles"
 
 const { Header: AntHeader } = Layout
 
@@ -43,10 +53,10 @@ const UserHeader = (props: Props) => {
     {
       key: "user-info",
       label: (
-        <div style={{ padding: "8px 0", borderBottom: "1px solid #f0f0f0", marginBottom: "8px" }}>
-          <div style={{ fontWeight: 500, marginBottom: "4px" }}>{user?.name || "Người dùng"}</div>
-          <div style={{ fontSize: "12px", color: "#8c8c8c" }}>@{user?.userName || ""}</div>
-        </div>
+        <UserInfoWrapper>
+          <UserName>{user?.name || "Người dùng"}</UserName>
+          <UserUsername>@{user?.userName || ""}</UserUsername>
+        </UserInfoWrapper>
       ),
       disabled: true,
       style: { cursor: "default" }
@@ -81,34 +91,21 @@ const UserHeader = (props: Props) => {
         top: 0,
         zIndex: 1000
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div style={{
-            width: "40px",
-            height: "40px",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: "18px"
-          }}>
-            DT
-          </div>
-          <span style={{ fontSize: "16px", fontWeight: 500 }}>Học Lập Trình Để Đi Làm</span>
-        </div>
+        <HeaderLeft>
+          <LogoContainer>TK</LogoContainer>
+          <LogoText>Trung tâm dạy thêm Thế Kiên</LogoText>
+        </HeaderLeft>
 
-        <div style={{ flex: 1, maxWidth: "600px", margin: "0 24px" }}>
+        <SearchContainer>
           <Input
             placeholder="Tìm kiếm khóa học, bài viết, video, ..."
             prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
             size="large"
             style={{ borderRadius: "8px" }}
           />
-        </div>
+        </SearchContainer>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <HeaderRight>
           {isAuthenticated && user ? (
             <Dropdown menu={{ items: menuItems }} placement="bottomRight" trigger={["click"]}>
               <Space style={{ cursor: "pointer", padding: "4px 8px", borderRadius: "4px" }}>
@@ -125,7 +122,7 @@ const UserHeader = (props: Props) => {
               </Button>
             </>
           )}
-        </div>
+        </HeaderRight>
       </AntHeader>
     </UserHeaderWrapper>
   )

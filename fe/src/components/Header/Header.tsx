@@ -7,7 +7,13 @@ import type { RootState } from "src/reducer/reducer"
 import { Button, Layout, Typography, Dropdown, Avatar, Space } from "antd"
 import { MenuOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons"
 import type { MenuProps } from "antd"
-import { HeaderWrapper } from "./Header.styles"
+import {
+  HeaderWrapper,
+  UserInfoWrapper,
+  UserName,
+  UserUsername,
+  HeaderLeft
+} from "./Header.styles"
 
 const { Header: AntHeader } = Layout
 
@@ -60,10 +66,10 @@ const Header = (props: Props) => {
     {
       key: "user-info",
       label: (
-        <div style={{ padding: "8px 0", borderBottom: "1px solid #f0f0f0", marginBottom: "8px" }}>
-          <div style={{ fontWeight: 500, marginBottom: "4px" }}>{user?.name || "Người dùng"}</div>
-          <div style={{ fontSize: "12px", color: "#8c8c8c" }}>@{user?.userName || ""}</div>
-        </div>
+        <UserInfoWrapper>
+          <UserName>{user?.name || "Người dùng"}</UserName>
+          <UserUsername>@{user?.userName || ""}</UserUsername>
+        </UserInfoWrapper>
       ),
       disabled: true,
       style: { cursor: "default" }
@@ -94,7 +100,7 @@ const Header = (props: Props) => {
         padding: "0 24px",
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <HeaderLeft>
           <Button
             type="text"
             icon={<MenuOutlined />}
@@ -104,7 +110,7 @@ const Header = (props: Props) => {
           <Typography.Title level={4} style={{ margin: 0 }}>
             {getCurrentPageName()}
           </Typography.Title>
-        </div>
+        </HeaderLeft>
         <Dropdown menu={{ items: menuItems }} placement="bottomRight" trigger={["click"]}>
           <Space style={{ cursor: "pointer", padding: "4px 8px", borderRadius: "4px", transition: "background 0.2s" }} className="profile-dropdown-trigger">
             <Avatar size="default" icon={<UserOutlined />} style={{ backgroundColor: "#1890ff" }} />

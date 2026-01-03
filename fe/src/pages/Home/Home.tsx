@@ -9,6 +9,12 @@ import type { Cource } from "src/@types/cource"
 import { useNavigate } from "react-router-dom"
 import { USER_PATH } from "src/constants/paths"
 import { useUser } from "src/hooks/useUser"
+import {
+  ContentWrapper,
+  TitleWrapper,
+  LoadingWrapper,
+  EmptyWrapper
+} from "./Home.styles"
 
 const { Title } = Typography
 
@@ -46,14 +52,14 @@ export default function Home() {
     <>
       {!isAdminOrManager && <Banner />}
       
-      <div style={{ marginBottom: "32px" }}>
+      <ContentWrapper>
         {!isAdminOrManager && (
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+          <TitleWrapper>
             <Title level={2} style={{ margin: 0 }}>
               Khóa học Pro
             </Title>
             <Badge count="MỚI" style={{ backgroundColor: "#1890ff" }} />
-          </div>
+          </TitleWrapper>
         )}
 
         {isAdminOrManager ? (
@@ -61,9 +67,9 @@ export default function Home() {
         ) : (
           <>
             {loading ? (
-              <div style={{ textAlign: "center", padding: "48px" }}>
+              <LoadingWrapper>
                 <Spin size="large" />
-              </div>
+              </LoadingWrapper>
             ) : (
               <Row gutter={[24, 24]}>
                 {courses.map((course) => (
@@ -78,13 +84,13 @@ export default function Home() {
             )}
 
             {!loading && courses.length === 0 && (
-              <div style={{ textAlign: "center", padding: "48px", color: "#8c8c8c" }}>
+              <EmptyWrapper>
                 Chưa có khóa học nào
-              </div>
+              </EmptyWrapper>
             )}
           </>
         )}
-      </div>
+      </ContentWrapper>
     </>
   )
 

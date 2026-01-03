@@ -69,16 +69,11 @@ export const USER_PATH = {
   } as PathWithoutResource,
   COURSES: {
     resourceType: "COURSE",
-    url: "/courses",
-    name: "Khóa học"
+    url: "/my-courses",
+    name: "Khóa học của tôi"
   } as PathWithResource,
   COURSE_DETAIL: {
-    url: "/courses/:id",
+    url: "/my-courses/:id",
     name: "Chi tiết khóa học"
   } as PathWithoutResource,
-
-  ARTICLES: {
-    url: "/articles",
-    name: "Bài viết"
-  } as PathWithoutResource
 }

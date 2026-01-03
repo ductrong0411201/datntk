@@ -12,6 +12,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { ADMIN_PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
+import { HeaderWrapper, LessonsHeader, LessonsTitle } from "./CourceForm.styles"
 
 const { Title } = Typography
 
@@ -241,7 +242,7 @@ function CourceForm() {
   return (
     <MainLayout>
       <Card style={{ maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}>
-        <div style={{ marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <HeaderWrapper>
           <div>
             <Title level={2} style={{ margin: 0 }}>
               {isEditMode ? "Sửa khóa học" : "Thêm khóa học mới"}
@@ -374,8 +375,8 @@ function CourceForm() {
           </Row>
           <Row gutter={16}>
             <Col span={24}>
-              <div style={{ marginTop: 16, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontWeight: 500, fontSize: 16 }}>Danh sách buổi học</span>
+              <LessonsHeader>
+                <LessonsTitle>Danh sách buổi học</LessonsTitle>
                 {!isEditMode && (
                   <Button
                     type="primary"
@@ -384,7 +385,7 @@ function CourceForm() {
                     onClick={handleAddLesson}
                   />
                 )}
-              </div>
+              </LessonsHeader>
               <Table
                 columns={lessonColumns}
                 dataSource={displayLessons}
