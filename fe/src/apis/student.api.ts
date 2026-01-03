@@ -2,8 +2,8 @@ import { apiClient } from "./base.api"
 import type { UserListItem, UserResponse } from "../@types/user"
 import type { StudentListResponse } from "../@types/student"
 
-export const getStudentsApi = async (): Promise<UserListItem[]> => {
-  const response = await apiClient.get<StudentListResponse>("/users/students")
+export const getStudentsApi = async (page: number = 1, limit: number = 10): Promise<{ items: UserListItem[]; meta: { page: number; limit: number; total: number; totalPages: number } }> => {
+  const response = await apiClient.get<StudentListResponse>(`/users/students?page=${page}&limit=${limit}`)
 
   if (response?.status === 200 && response?.data) {
     return response.data

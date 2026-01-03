@@ -4,11 +4,12 @@ import type { Cource } from "src/@types/cource"
 import {
   CourseCardWrapper,
   CoverWrapper,
+  CourseTitle,
   PriceWrapper,
   TeacherWrapper
 } from "./CourseCard.styles"
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 interface Props {
   course: Cource
@@ -50,9 +51,9 @@ const CourseCard = ({ course, onClick }: Props) => {
               fontSize: "24px",
               color: "#ffd700"
             }} />
-            <Title level={2} style={{ color: "#fff", margin: 0, textAlign: "center", padding: "0 16px" }}>
+            <CourseTitle level={2}>
               {course.name}
-            </Title>
+            </CourseTitle>
           </CoverWrapper>
         }
       >

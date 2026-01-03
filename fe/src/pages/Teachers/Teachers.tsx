@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getTeachersApi, deleteTeacherApi, createTeacherApi, updateTeacherApi, changeTeacherPasswordApi } from "src/apis/teacher.api"
+import { deleteTeacherApi, createTeacherApi, updateTeacherApi, changeTeacherPasswordApi } from "src/apis/teacher.api"
+import { getUsersApi } from "src/apis/user.api"
 import { getSubjectsApi } from "src/apis/subject.api"
 import type { UserListItem } from "src/@types/user"
 import type { Subject } from "src/@types/subject"
@@ -34,19 +35,15 @@ function Teachers() {
     loadSubjects()
   }, [])
 
-  const fetchTeachers = async (page: number = 1, limit: number = 10) => {
-    const teachers = await getTeachersApi()
-    const start = (page - 1) * limit
-    const end = start + limit
-    return {
-      items: teachers.slice(start, end),
-      meta: {
-        page,
-        limit,
-        total: teachers.length,
-        totalPages: Math.ceil(teachers.length / limit)
-      }
-    }
+  const fetchTeachers = async (
+    page: number = 1,
+    limit: number = 10,
+    sortBy?: string,
+    sortOrder?: "ASC" | "DESC",
+    search?: string,
+    filters?: Record<string, any>
+  ) => {
+    return await getUsersApi(page, limit, sortBy || "name", sortOrder || "ASC", search, { ...filters, roleCode: "giaovien" })
   }
 
   const columns: ColumnsType<UserListItem> = [

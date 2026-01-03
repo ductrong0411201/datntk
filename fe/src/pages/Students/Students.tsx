@@ -1,7 +1,8 @@
 import { useState } from "react"
 import MainLayout from "src/layouts/MainLayout"
 import BaseTable from "src/components/BaseTable/BaseTable"
-import { getStudentsApi, deleteStudentApi, createStudentApi, updateStudentApi, changeStudentPasswordApi } from "src/apis/student.api"
+import { deleteStudentApi, createStudentApi, updateStudentApi, changeStudentPasswordApi } from "src/apis/student.api"
+import { getUsersApi } from "src/apis/user.api"
 import type { UserListItem } from "src/@types/user"
 import { message, Modal, Form, Input, Button, DatePicker } from "antd"
 import { KeyOutlined } from "@ant-design/icons"
@@ -19,19 +20,15 @@ function Students() {
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
 
-  const fetchStudents = async (page: number = 1, limit: number = 10) => {
-    const students = await getStudentsApi()
-    const start = (page - 1) * limit
-    const end = start + limit
-    return {
-      items: students.slice(start, end),
-      meta: {
-        page,
-        limit,
-        total: students.length,
-        totalPages: Math.ceil(students.length / limit)
-      }
-    }
+  const fetchStudents = async (
+    page: number = 1,
+    limit: number = 10,
+    sortBy?: string,
+    sortOrder?: "ASC" | "DESC",
+    search?: string,
+    filters?: Record<string, any>
+  ) => {
+    return await getUsersApi(page, limit, sortBy || "name", sortOrder || "ASC", search, { ...filters, roleCode: "hocsinh" })
   }
 
   const columns: ColumnsType<UserListItem> = [

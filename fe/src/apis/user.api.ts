@@ -95,8 +95,8 @@ export const deleteUserApi = async (id: number): Promise<void> => {
   throw new Error(response?.message || "Xóa người dùng thất bại")
 }
 
-export const getTeachersApi = async (): Promise<UserListItem[]> => {
-  const response = await apiClient.get<{ status: number; data: UserListItem[]; message: string }>("/users/teachers")
+export const getTeachersApi = async (page: number = 1, limit: number = 10): Promise<{ items: UserListItem[]; meta: { page: number; limit: number; total: number; totalPages: number } }> => {
+  const response = await apiClient.get<{ status: number; data: { items: UserListItem[]; meta: { page: number; limit: number; total: number; totalPages: number } }; message: string }>(`/users/teachers?page=${page}&limit=${limit}`)
 
   if (response?.status === 200 && response?.data) {
     return response.data

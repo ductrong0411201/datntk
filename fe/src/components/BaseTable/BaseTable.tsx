@@ -9,6 +9,7 @@ import {
   HeaderTop,
   FiltersContainer,
   TableWrapper,
+  TableContent,
   PaginationWrapper
 } from "./BaseTable.styles"
 
@@ -62,30 +63,62 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
   const [filters, setFilters] = useState<Record<string, any>>({})
   const tableContainerRef = React.useRef<HTMLDivElement>(null)
   const headerRef = React.useRef<HTMLDivElement>(null)
+  const paginationRef = React.useRef<HTMLDivElement>(null)
+  const tableWrapperRef = React.useRef<HTMLDivElement>(null)
+  const tableContentRef = React.useRef<HTMLDivElement>(null)
   const [tableHeight, setTableHeight] = useState<number>(0)
 
   useEffect(() => {
     const calculateTableHeight = () => {
-      if (tableContainerRef.current && headerRef.current) {
-        const containerHeight = tableContainerRef.current.clientHeight
-        const headerHeight = headerRef.current.offsetHeight
-        const paginationHeight = 64 // Approximate pagination height
-        const padding = 32 // Card body padding
-        const height = containerHeight - headerHeight - paginationHeight - padding
+      if (tableWrapperRef.current && paginationRef.current && tableContentRef.current) {
+        // Sử dụng getBoundingClientRect để có giá trị chính xác hơn
+        const wrapperRect = tableWrapperRef.current.getBoundingClientRect()
+        const paginationRect = paginationRef.current.getBoundingClientRect()
+        const contentRect = tableContentRef.current.getBoundingClientRect()
+        
+        // Tính chiều cao từ top của wrapper đến top của pagination
+        // Đây là không gian thực tế có sẵn cho table
+        let height = paginationRect.top - wrapperRect.top
+        
+        // Nếu có thể đo từ content, sử dụng giá trị đó để chính xác hơn
+        if (contentRect.height > 0) {
+          // Chiều cao của content trừ đi một chút để đảm bảo không bị overflow
+          height = contentRect.height - 1
+        }
+        
+        // Đảm bảo chiều cao không âm và có giá trị tối thiểu
         setTableHeight(Math.max(height, 200))
       }
     }
 
+    // Delay để đảm bảo DOM đã render xong, đặc biệt khi data hoặc pageSize thay đổi
+    const timeoutId1 = setTimeout(calculateTableHeight, 100)
+    const timeoutId2 = setTimeout(calculateTableHeight, 250)
+    
+    // Tính toán ngay lập tức nếu có thể
     calculateTableHeight()
-    const resizeObserver = new ResizeObserver(calculateTableHeight)
-    if (tableContainerRef.current) {
-      resizeObserver.observe(tableContainerRef.current)
+    
+    const resizeObserver = new ResizeObserver(() => {
+      // Delay nhỏ khi resize để tránh tính toán quá nhiều lần
+      setTimeout(calculateTableHeight, 50)
+    })
+    
+    if (tableWrapperRef.current) {
+      resizeObserver.observe(tableWrapperRef.current)
+    }
+    if (paginationRef.current) {
+      resizeObserver.observe(paginationRef.current)
+    }
+    if (tableContentRef.current) {
+      resizeObserver.observe(tableContentRef.current)
     }
 
     return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
       resizeObserver.disconnect()
     }
-  }, [data])
+  }, [data, pagination.current, pagination.pageSize, pagination.total])
 
   const loadData = async (
     page: number = pagination.current,
@@ -315,17 +348,19 @@ function BaseTable<T extends { id: string | number }>(props: BaseTableProps<T>) 
               )}
             </FiltersContainer>
           </HeaderContainer>
-          <TableWrapper>
-            <Table<T>
-              columns={tableColumns}
-              dataSource={data}
-              rowKey="id"
-              loading={loading || externalLoading}
-              pagination={false}
-              onChange={handleTableChange}
-              scroll={{ x: "max-content", y: tableHeight }}
-            />
-            <PaginationWrapper>
+          <TableWrapper ref={tableWrapperRef}>
+            <TableContent ref={tableContentRef}>
+              <Table<T>
+                columns={tableColumns}
+                dataSource={data}
+                rowKey="id"
+                loading={loading || externalLoading}
+                pagination={false}
+                onChange={handleTableChange}
+                scroll={{ x: "max-content", y: tableHeight }}
+              />
+            </TableContent>
+            <PaginationWrapper ref={paginationRef}>
               <Pagination
                 current={pagination.current}
                 pageSize={pagination.pageSize}

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import MainLayout from "src/layouts/MainLayout"
 import { createCourceApi, updateCourceApi, getCourceByIdApi } from "src/apis/cource.api"
 import { getSubjectsApi } from "src/apis/subject.api"
-import { getTeachersApi } from "src/apis/user.api"
+import { getUsersApi } from "src/apis/user.api"
 import type { Subject } from "src/@types/subject"
 import type { UserListItem } from "src/@types/user"
 import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStudentsTable"
@@ -54,10 +54,10 @@ function CourceForm() {
         setLoadingData(true)
         const [subjectsData, teachersData] = await Promise.all([
           getSubjectsApi(1, 1000),
-          getTeachersApi()
+          getUsersApi(1, 1000, "name", "ASC", undefined, { roleCode: "giaovien" })
         ])
         setSubjects(subjectsData.items)
-        setTeachers(teachersData)
+        setTeachers(teachersData.items)
 
         if (id) {
           const courceData = await getCourceByIdApi(Number(id))
@@ -258,7 +258,7 @@ function CourceForm() {
               {isEditMode ? "Cập nhật" : "Tạo mới"}
             </Button>
           </div>
-        </div>
+        </HeaderWrapper>
 
         <Form
           form={form}

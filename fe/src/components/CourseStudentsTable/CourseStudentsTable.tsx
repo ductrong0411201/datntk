@@ -3,7 +3,7 @@ import { Button, Table, Modal, Form, Select, message } from "antd"
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
 import { getCourceStudentsApi, addStudentToCourceApi, removeStudentFromCourceApi } from "src/apis/cource.api"
-import { getStudentsApi } from "src/apis/student.api"
+import { getUsersApi } from "src/apis/user.api"
 import type { CourceStudent } from "src/@types/cource"
 import type { UserListItem } from "src/@types/user"
 import dayjs from "dayjs"
@@ -66,8 +66,8 @@ function CourseStudentsTable({
 
   const loadAllStudents = async () => {
     try {
-      const studentsList = await getStudentsApi()
-      setAllStudents(studentsList)
+      const studentsList = await getUsersApi(1, 1000, "name", "ASC", undefined, { roleCode: "hocsinh" })
+      setAllStudents(studentsList.items)
     } catch (error) {
       console.error("Lỗi khi tải danh sách học sinh:", error)
     }
@@ -206,7 +206,7 @@ function CourseStudentsTable({
             onClick={handleAddStudent}
           />
         )}
-      </div>
+      </TitleWrapper>
       <Table
         columns={studentColumns}
         dataSource={students}

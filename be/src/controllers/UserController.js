@@ -12,9 +12,41 @@ class UserController extends BaseController {
     });
   }
 
+  async list(req, res) {
+    try {
+      const { Role } = require("../models");
+      const { sendSuccess, sendServerError } = require("../utils/response");
+      
+      // Xử lý filter theo roleCode trước khi build filter clause
+      if (req.query.roleCode) {
+        const role = await Role.findOne({ where: { code: req.query.roleCode } });
+        if (role) {
+          req.query.role = role.id;
+        } else {
+          // Nếu không tìm thấy role, trả về empty result
+          return sendSuccess(res, {
+            items: [],
+            meta: {
+              page: Math.max(parseInt(req.query.page, 10) || 1, 1),
+              limit: Math.min(parseInt(req.query.limit, 10) || 10, 100),
+              total: 0,
+              totalPages: 0,
+            },
+          }, "Lấy danh sách thành công");
+        }
+      }
+      
+      // Gọi method của BaseController
+      return super.list(req, res);
+    } catch (err) {
+      console.error(err.message);
+      return sendServerError(res, "Lỗi máy chủ");
+    }
+  }
+
   _getListOptions(req) {
-    const { Role } = require("../models");
-    return {
+    const { Role, Subject } = require("../models");
+    const options = {
       attributes: { exclude: ["password"] },
       include: [
         {
@@ -24,6 +56,18 @@ class UserController extends BaseController {
         }
       ]
     };
+    
+    // Nếu filter theo roleCode là giaovien, thêm Subject vào include
+    if (req.query.roleCode === "giaovien") {
+      options.include.push({
+        model: Subject,
+        as: "subject",
+        attributes: ["id", "name", "description"],
+        required: false
+      });
+    }
+    
+    return options;
   }
 
   async getById(req, res) {
@@ -195,17 +239,26 @@ class UserController extends BaseController {
       const { Role } = require("../models");
       const { sendSuccess, sendServerError } = require("../utils/response");
       
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limitInput = parseInt(req.query.limit, 10);
+      const limit = limitInput && limitInput > 0 ? Math.min(limitInput, 100) : 10;
+      const offset = (page - 1) * limit;
+      
       const teacherRole = await Role.findOne({ where: { code: "giaovien" } });
       if (!teacherRole) {
-        return res.status(200).json({
-          status: 200,
-          data: [],
-          message: "Lấy danh sách giáo viên thành công"
-        });
+        return sendSuccess(res, {
+          items: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+          },
+        }, "Lấy danh sách giáo viên thành công");
       }
 
       const { Subject } = require("../models");
-      const teachers = await User.findAll({
+      const { rows, count } = await User.findAndCountAll({
         where: { role: teacherRole.id },
         attributes: { exclude: ["password"] },
         include: [
@@ -220,17 +273,23 @@ class UserController extends BaseController {
             attributes: ["id", "name", "description"]
           }
         ],
-        order: [["name", "ASC"]]
+        order: [["name", "ASC"]],
+        offset,
+        limit
       });
 
-      return sendSuccess(res, teachers, "Lấy danh sách giáo viên thành công");
+      return sendSuccess(res, {
+        items: rows,
+        meta: {
+          page,
+          limit,
+          total: count,
+          totalPages: Math.max(Math.ceil(count / limit), 1),
+        },
+      }, "Lấy danh sách giáo viên thành công");
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({
-        status: 500,
-        message: "Lỗi máy chủ",
-        data: null
-      });
+      return sendServerError(res, "Lỗi máy chủ");
     }
   }
 
@@ -533,16 +592,25 @@ class UserController extends BaseController {
       const { Role } = require("../models");
       const { sendSuccess, sendServerError } = require("../utils/response");
       
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limitInput = parseInt(req.query.limit, 10);
+      const limit = limitInput && limitInput > 0 ? Math.min(limitInput, 100) : 10;
+      const offset = (page - 1) * limit;
+      
       const studentRole = await Role.findOne({ where: { code: "hocsinh" } });
       if (!studentRole) {
-        return res.status(200).json({
-          status: 200,
-          data: [],
-          message: "Lấy danh sách học sinh thành công"
-        });
+        return sendSuccess(res, {
+          items: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+          },
+        }, "Lấy danh sách học sinh thành công");
       }
 
-      const students = await User.findAll({
+      const { rows, count } = await User.findAndCountAll({
         where: { role: studentRole.id },
         attributes: { exclude: ["password"] },
         include: [
@@ -552,17 +620,23 @@ class UserController extends BaseController {
             attributes: ["id", "name", "code", "description"]
           }
         ],
-        order: [["name", "ASC"]]
+        order: [["name", "ASC"]],
+        offset,
+        limit
       });
 
-      return sendSuccess(res, students, "Lấy danh sách học sinh thành công");
+      return sendSuccess(res, {
+        items: rows,
+        meta: {
+          page,
+          limit,
+          total: count,
+          totalPages: Math.max(Math.ceil(count / limit), 1),
+        },
+      }, "Lấy danh sách học sinh thành công");
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({
-        status: 500,
-        message: "Lỗi máy chủ",
-        data: null
-      });
+      return sendServerError(res, "Lỗi máy chủ");
     }
   }
 

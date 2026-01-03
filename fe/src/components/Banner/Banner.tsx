@@ -1,5 +1,6 @@
 import { Row, Col } from "antd"
 import { CrownOutlined } from "@ant-design/icons"
+import bannerImage from "src/assets/images/banner.jpg"
 import {
   BannerWrapper,
   BannerContent,
@@ -19,24 +20,24 @@ const Banner = () => {
         <Col xs={24} md={12}>
           <BannerContent>
             <TitleWrapper>
-              <Title>Lớp Fullstack qua Zoom</Title>
+              <Title>Trung tâm dạy thêm Thế Kiên</Title>
               <CrownIcon>
                 <CrownOutlined />
               </CrownIcon>
             </TitleWrapper>
             <Description>
-              Học online trực tiếp với giảng viên và trợ giảng giàu kinh nghiệm. Review code và chấm bài trực tiếp. Giờ học linh hoạt, phù hợp mọi đối tượng.
+              Học trực tiếp với giảng viên và trợ giảng giàu kinh nghiệm. Chấm bài trực tiếp. Giờ học linh hoạt, phù hợp mọi đối tượng.
             </Description>
             <CTAButton type="primary" size="large">
-              NHẬN LỘ TRÌNH FULLSTACK
+              ĐĂNG KÝ NGAY
             </CTAButton>
           </BannerContent>
         </Col>
         <Col xs={24} md={12}>
           <BannerImage>
-            <BannerImg 
-              src="/director-illustration.png" 
-              alt="Director illustration"
+            <BannerImg
+              src={bannerImage}
+              alt="Banner illustration"
             />
           </BannerImage>
         </Col>

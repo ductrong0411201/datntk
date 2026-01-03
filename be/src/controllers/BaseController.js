@@ -117,6 +117,7 @@ class BaseController {
 
   async list(req, res) {
     try {
+      console.log(123123123);
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
       const limitInput = parseInt(req.query.limit, 10);
       const limit = limitInput && limitInput > 0 ? Math.min(limitInput, 100) : 10;
@@ -126,9 +127,6 @@ class BaseController {
       const order = this._buildOrderClause(req);
       const options = this._getListOptions(req);
       
-      console.log('Final where clause:', JSON.stringify(where, null, 2));
-      console.log('Order:', order);
-      console.log('Options:', JSON.stringify(options, null, 2));
       
       const { rows, count } = await this.Model.findAndCountAll({
         where,
