@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Typography, Spin, message, Tabs, Collapse, Table, Form, Input, Button, Avatar, Empty } from "antd"
-import { UserOutlined, MessageOutlined } from "@ant-design/icons"
+import { Typography, Spin, message, Tabs, Collapse, Table, Form, Input, Button, Avatar, Empty, List, Modal } from "antd"
+import { UserOutlined, MessageOutlined, FileTextOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons"
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer"
 import UserLayout from "src/layouts/UserLayout"
 import { getCourseByIdApi, getCourseStudentsApi } from "src/apis/course.api"
 import { getQuestionsByCourseIdApi, createQuestionApi } from "src/apis/question.api"
 import { createAnswerApi } from "src/apis/answer.api"
+import { getDocumentsApi } from "src/apis/document.api"
 import type { Course, Lesson } from "src/@types/course"
 import type { Question, Answer } from "src/@types/question"
 import type { CourseStudent } from "src/@types/course"
+import type { Document } from "src/@types/document"
 import type { LessonGroup } from "./CourseDetail.types"
 import { USER_PATH } from "src/constants/paths"
 import { useUser } from "src/hooks/useUser"
@@ -27,6 +30,16 @@ import {
 const { Title, Text, Paragraph } = Typography
 const { Panel } = Collapse
 const { TextArea } = Input
+
+const DAYS_OF_WEEK = [
+  "Chủ nhật",
+  "Thứ 2",
+  "Thứ 3",
+  "Thứ 4",
+  "Thứ 5",
+  "Thứ 6",
+  "Thứ 7"
+]
 
 const TabContent = styled.div`
   margin-top: 24px;
@@ -117,6 +130,10 @@ export default function MyCourseDetail() {
   const [expandedPanels, setExpandedPanels] = useState<string[]>([])
   const [questionForm] = Form.useForm()
   const [answerForms] = useState<{ [key: number]: any }>({})
+  const [lessonDocuments, setLessonDocuments] = useState<Map<number, Document[]>>(new Map())
+  const [loadingDocuments, setLoadingDocuments] = useState<Map<number, boolean>>(new Map())
+  const [isViewDocumentModalVisible, setIsViewDocumentModalVisible] = useState(false)
+  const [viewingDocument, setViewingDocument] = useState<Document | null>(null)
 
   useEffect(() => {
     if (id) {
@@ -130,6 +147,12 @@ export default function MyCourseDetail() {
       loadQuestions()
     }
   }, [course])
+
+  useEffect(() => {
+    if (course?.lessons && expandedPanels.length > 0) {
+      loadDocumentsForExpandedPanels()
+    }
+  }, [expandedPanels, course])
 
   const loadCourse = async () => {
     if (!id) return
@@ -210,10 +233,34 @@ export default function MyCourseDetail() {
     
     const sortedDates = Object.keys(groups).sort()
     
-    return sortedDates.map((date, index) => ({
-      title: `Buổi ${index + 1}: ${dayjs(date).format("DD/MM/YYYY")}`,
-      lessons: groups[date].sort((a, b) => dayjs(a.start).diff(dayjs(b.start)))
-    }))
+    return sortedDates.map((date, index) => {
+      const sortedLessons = groups[date].sort((a, b) => dayjs(a.start).diff(dayjs(b.start)))
+      const dayOfWeek = dayjs(date).day()
+      const dayName = DAYS_OF_WEEK[dayOfWeek]
+      
+      // Tìm giờ bắt đầu sớm nhất và giờ kết thúc muộn nhất
+      let earliestStart = dayjs(sortedLessons[0].start)
+      let latestEnd = dayjs(sortedLessons[0].end)
+      
+      sortedLessons.forEach(lesson => {
+        const start = dayjs(lesson.start)
+        const end = dayjs(lesson.end)
+        if (start.isBefore(earliestStart)) {
+          earliestStart = start
+        }
+        if (end.isAfter(latestEnd)) {
+          latestEnd = end
+        }
+      })
+      
+      const startTimeStr = earliestStart.format("HH:mm")
+      const endTimeStr = latestEnd.format("HH:mm")
+      
+      return {
+        title: `Buổi ${index + 1}: ${dayName}, ${dayjs(date).format("DD/MM/YYYY")} (${startTimeStr} - ${endTimeStr})`,
+        lessons: sortedLessons
+      }
+    })
   }
 
   const handleExpandAll = () => {
@@ -224,6 +271,93 @@ export default function MyCourseDetail() {
 
   const handleCollapseAll = () => {
     setExpandedPanels([])
+  }
+
+  const loadDocumentsForExpandedPanels = async () => {
+    if (!course?.lessons) return
+
+    const lessonGroups = groupLessonsByDate(course.lessons)
+    const expandedIndexes = expandedPanels.map(key => parseInt(key))
+    
+    const lessonsToLoad: number[] = []
+    expandedIndexes.forEach(index => {
+      if (lessonGroups[index]) {
+        lessonGroups[index].lessons.forEach(lesson => {
+          if (lesson.id && !lessonDocuments.has(lesson.id)) {
+            lessonsToLoad.push(lesson.id)
+          }
+        })
+      }
+    })
+
+    if (lessonsToLoad.length === 0) return
+
+    lessonsToLoad.forEach(lessonId => {
+      setLoadingDocuments(prev => new Map(prev).set(lessonId, true))
+    })
+
+    try {
+      await Promise.all(
+        lessonsToLoad.map(async (lessonId) => {
+          try {
+            const response = await getDocumentsApi(1, 1000, { lessonn_id: lessonId })
+            setLessonDocuments(prev => {
+              const newMap = new Map(prev)
+              newMap.set(lessonId, response.items)
+              return newMap
+            })
+          } catch (error) {
+            console.error(`Lỗi khi tải tài liệu cho buổi học ${lessonId}:`, error)
+            setLessonDocuments(prev => {
+              const newMap = new Map(prev)
+              newMap.set(lessonId, [])
+              return newMap
+            })
+          } finally {
+            setLoadingDocuments(prev => {
+              const newMap = new Map(prev)
+              newMap.set(lessonId, false)
+              return newMap
+            })
+          }
+        })
+      )
+    } catch (error) {
+      console.error("Lỗi khi tải tài liệu:", error)
+    }
+  }
+
+  const handleDownloadDocument = (document: Document) => {
+    const url = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
+    window.open(url, "_blank")
+  }
+
+  const handleViewDocument = (document: Document) => {
+    setViewingDocument(document)
+    setIsViewDocumentModalVisible(true)
+  }
+
+  const handleCloseViewDocument = () => {
+    setIsViewDocumentModalVisible(false)
+    setViewingDocument(null)
+  }
+
+  const getDocumentViewerFiles = (document: Document) => {
+    const fileUrl = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
+    return [
+      {
+        uri: fileUrl,
+        fileName: document.name
+      }
+    ]
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const sizes = ["Bytes", "KB", "MB", "GB"]
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i]
   }
 
   const handleCreateQuestion = async (values: { content: string }) => {
@@ -410,16 +544,73 @@ export default function MyCourseDetail() {
                       }
                       key={index.toString()}
                     >
-                      {group.lessons.map((lesson, lessonIndex) => (
-                        <LessonItem key={lesson.id}>
-                          <span className="lesson-name">
-                            {lessonIndex + 1}. {lesson.name}
-                          </span>
-                          <span className="lesson-duration">
-                            {formatDuration(lesson.start, lesson.end)}
-                          </span>
-                        </LessonItem>
-                      ))}
+                      {group.lessons.map((lesson, lessonIndex) => {
+                        const documents = lesson.id ? lessonDocuments.get(lesson.id) || [] : []
+                        const isLoading = lesson.id ? loadingDocuments.get(lesson.id) : false
+                        
+                        return (
+                          <div key={lesson.id} style={{ marginBottom: 24 }}>
+                            <LessonItem>
+                              <span className="lesson-name">
+                                {lessonIndex + 1}. {lesson.name || `Buổi học ${lessonIndex + 1}`}
+                              </span>
+                              <span className="lesson-duration">
+                                {formatDuration(lesson.start, lesson.end)}
+                              </span>
+                            </LessonItem>
+                            
+                            {lesson.id && (
+                              <div style={{ marginTop: 12, marginLeft: 24 }}>
+                                {isLoading ? (
+                                  <Spin size="small" />
+                                ) : documents.length > 0 ? (
+                                  <div>
+                                    <Text strong style={{ display: "block", marginBottom: 8 }}>
+                                      Tài liệu ({documents.length})
+                                    </Text>
+                                    <List
+                                      size="small"
+                                      dataSource={documents}
+                                      renderItem={(doc) => (
+                                        <List.Item
+                                          actions={[
+                                            <Button
+                                              type="link"
+                                              size="small"
+                                              icon={<EyeOutlined />}
+                                              onClick={() => handleViewDocument(doc)}
+                                            >
+                                              Xem
+                                            </Button>,
+                                            <Button
+                                              type="link"
+                                              size="small"
+                                              icon={<DownloadOutlined />}
+                                              onClick={() => handleDownloadDocument(doc)}
+                                            >
+                                              Tải xuống
+                                            </Button>
+                                          ]}
+                                        >
+                                          <List.Item.Meta
+                                            avatar={<FileTextOutlined />}
+                                            title={doc.name}
+                                            description={`${doc.documentType?.name || ""} • ${formatFileSize(doc.file_size)}`}
+                                          />
+                                        </List.Item>
+                                      )}
+                                    />
+                                  </div>
+                                ) : (
+                                  <Text type="secondary" style={{ fontSize: 12 }}>
+                                    Chưa có tài liệu
+                                  </Text>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
                     </Panel>
                   ))}
                 </Collapse>
@@ -545,6 +736,33 @@ export default function MyCourseDetail() {
 
         <Tabs items={tabItems} defaultActiveKey="info" />
       </DetailWrapper>
+
+      <Modal
+        title={`Xem tài liệu: ${viewingDocument?.name || ""}`}
+        open={isViewDocumentModalVisible}
+        onCancel={handleCloseViewDocument}
+        footer={null}
+        width="90%"
+        style={{ top: 20 }}
+        styles={{ body: { padding: 0, height: "80vh" } }}
+      >
+        {viewingDocument && (
+          <div style={{ width: "100%", height: "100%" }}>
+            <DocViewer
+              key={viewingDocument.id}
+              pluginRenderers={DocViewerRenderers}
+              documents={getDocumentViewerFiles(viewingDocument)}
+              config={{
+                header: {
+                  disableHeader: false,
+                  disableFileName: false
+                }
+              }}
+              style={{ height: "80vh" }}
+            />
+          </div>
+        )}
+      </Modal>
     </UserLayout>
   )
 }

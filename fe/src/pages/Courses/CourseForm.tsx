@@ -11,6 +11,7 @@ import type { Document } from "src/@types/document"
 import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStudentsTable"
 import { message, Form, Input, Select, InputNumber, DatePicker, TimePicker, Button, Card, Typography, Row, Col, Table, Modal, Upload, Space } from "antd"
 import { PlusOutlined, DeleteOutlined, EditOutlined, FileTextOutlined, UploadOutlined, DownloadOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from "@ant-design/icons"
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer"
 import dayjs from "dayjs"
 import { ADMIN_PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
@@ -320,7 +321,7 @@ function CourseForm() {
   }
 
   const handleDownloadDocument = (document: Document) => {
-    const url = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}${document.file_path}`
+    const url = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
     window.open(url, "_blank")
   }
 
@@ -334,22 +335,14 @@ function CourseForm() {
     setViewingDocument(null)
   }
 
-  const getDocumentViewerUrl = (document: Document): string => {
-    const fileUrl = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}${document.file_path}`
-    const encodedUrl = encodeURIComponent(fileUrl)
-    const ext = document.file_path?.toLowerCase().split('.').pop() || ''
-
-    if (ext === 'pdf') {
-      return fileUrl
-    } else if (['doc', 'docx'].includes(ext)) {
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`
-    } else if (['ppt', 'pptx'].includes(ext)) {
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`
-    } else if (['xls', 'xlsx'].includes(ext)) {
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`
-    }
-
-    return fileUrl
+  const getDocumentViewerFiles = (document: Document) => {
+    const fileUrl = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
+    return [
+      {
+        uri: fileUrl,
+        fileName: document.name
+      }
+    ]
   }
 
   const formatFileSize = (bytes: number) => {
@@ -832,15 +825,20 @@ function CourseForm() {
           styles={{ body: { padding: 0, height: "80vh" } }}
         >
           {viewingDocument && (
-            <iframe
-              src={getDocumentViewerUrl(viewingDocument)}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "none"
-              }}
-              title="Document Viewer"
-            />
+            <div style={{ width: "100%", height: "100%" }}>
+              <DocViewer
+                key={viewingDocument.id}
+                pluginRenderers={DocViewerRenderers}
+                documents={getDocumentViewerFiles(viewingDocument)}
+                config={{
+                  header: {
+                    disableHeader: false,
+                    disableFileName: false
+                  }
+                }}
+                style={{ height: "80vh" }}
+              />
+            </div>
           )}
         </Modal>
       </Card>

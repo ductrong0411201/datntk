@@ -24,11 +24,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 const corsOptions = {
   origin: function (origin, callback) {
@@ -41,6 +37,12 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/', indexRouter);
 app.use('/', usersRouter);
