@@ -1,27 +1,30 @@
 import { useNavigate, useLocation } from "react-router-dom"
+import { useSelector } from "react-redux"
 import { Layout, Menu } from "antd"
 import { HomeOutlined, BookOutlined } from "@ant-design/icons"
 import { USER_PATH } from "src/constants/paths"
+import type { RootState } from "src/reducer/reducer"
 import { UserSidebarWrapper } from "./UserSidebar.styles"
 
 const { Sider } = Layout
 
-const menuItems = [
-  {
-    key: USER_PATH.HOME.url,
-    icon: <HomeOutlined />,
-    label: USER_PATH.HOME.name
-  },
-  {
-    key: USER_PATH.COURSES.url,
-    icon: <BookOutlined />,
-    label: USER_PATH.COURSES.name
-  },
-]
-
 const UserSidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const isAuthenticated = useSelector((state: RootState) => state.app.isAuthenticated)
+
+  const menuItems = [
+    {
+      key: USER_PATH.HOME.url,
+      icon: <HomeOutlined />,
+      label: USER_PATH.HOME.name
+    },
+    ...(isAuthenticated ? [{
+      key: USER_PATH.COURSES.url,
+      icon: <BookOutlined />,
+      label: USER_PATH.COURSES.name
+    }] : [])
+  ]
 
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key)

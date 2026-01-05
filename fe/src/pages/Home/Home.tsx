@@ -1,6 +1,7 @@
 import UserLayout from "src/layouts/UserLayout"
 import MainLayout from "src/layouts/MainLayout"
 import UserHome from "./UserHome"
+import AdminHome from "./AdminHome"
 import { useUser } from "src/hooks/useUser"
 
 export default function Home() {
@@ -10,7 +11,7 @@ export default function Home() {
   if (isAdminOrManager) {
     return (
       <MainLayout>
-        <h2 className="mb-4">Trang chủ quản trị</h2>
+        <AdminHome />
       </MainLayout>
     )
   }

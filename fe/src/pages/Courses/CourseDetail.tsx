@@ -6,7 +6,7 @@ import UserLayout from "src/layouts/UserLayout"
 import { getCourseByIdApi, getCourseStudentsApi, addStudentToCourseApi } from "src/apis/course.api"
 import type { Course, Lesson } from "src/@types/course"
 import type { LessonGroup } from "./CourseDetail.types"
-import { USER_PATH } from "src/constants/paths"
+import { USER_PATH, PATH } from "src/constants/paths"
 import { useUser } from "src/hooks/useUser"
 import dayjs from "dayjs"
 import {
@@ -56,6 +56,8 @@ export default function CourseDetail() {
   useEffect(() => {
     if (course && user) {
       checkRegistration()
+    } else if (course && !user) {
+      setCheckingRegistration(false)
     }
   }, [course, user])
 
@@ -306,7 +308,7 @@ export default function CourseDetail() {
                 >
                   Đã đăng ký
                 </ActionButton>
-              ) : (
+              ) : user ? (
                 <ActionButton
                   type="primary"
                   size="large"
@@ -314,6 +316,14 @@ export default function CourseDetail() {
                   onClick={handleRegister}
                 >
                   ĐĂNG KÝ HỌC
+                </ActionButton>
+              ) : (
+                <ActionButton
+                  type="primary"
+                  size="large"
+                  onClick={() => navigate(PATH.LOGIN.url + "?redirect=/courses/" + id)}
+                >
+                  ĐĂNG NHẬP ĐỂ ĐĂNG KÝ
                 </ActionButton>
               )}
 

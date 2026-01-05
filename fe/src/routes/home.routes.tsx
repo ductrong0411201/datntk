@@ -28,25 +28,17 @@ export const homeRoutes = (
     <Route
       path={USER_PATH.HOME.url}
       element={
-        <AuthenticatedGuard>
-          <UserGuard>
-            <Suspense fallback={<Loading />}>
-              <Home />
-            </Suspense>
-          </UserGuard>
-        </AuthenticatedGuard>
+        <Suspense fallback={<Loading />}>
+          <Home />
+        </Suspense>
       }
     />
     <Route
       path="/courses/:id"
       element={
-        <AuthenticatedGuard>
-          <UserGuard>
-            <Suspense fallback={<Loading />}>
-              <CourseDetail />
-            </Suspense>
-          </UserGuard>
-        </AuthenticatedGuard>
+        <Suspense fallback={<Loading />}>
+          <CourseDetail />
+        </Suspense>
       }
     />
     <Route

@@ -1,9 +1,12 @@
+import { useState } from "react"
 import { Card, Typography, Space } from "antd"
 import { CrownOutlined } from "@ant-design/icons"
 import type { Course } from "src/@types/course"
+import { getRandomSubjectImage } from "src/utils/subjectImages"
 import {
   CourseCardWrapper,
   CoverWrapper,
+  CoverImage,
   CourseTitle,
   PriceWrapper,
   TeacherWrapper
@@ -21,14 +24,16 @@ const CourseCard = ({ course, onClick }: Props) => {
     return new Intl.NumberFormat("vi-VN").format(price) + "₫"
   }
 
-  const getGradientColors = (index: number) => {
-    const gradients = [
-      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-      "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
-    ]
-    return gradients[index % gradients.length]
+  const thumbnailImage = getRandomSubjectImage(course.subject?.name, course.id)
+  const [imageError, setImageError] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
+
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
+  const handleImageLoad = () => {
+    setImageLoaded(true)
   }
 
   return (
@@ -43,13 +48,23 @@ const CourseCard = ({ course, onClick }: Props) => {
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
         }}
         cover={
-          <CoverWrapper gradient={getGradientColors(course.id)}>
+          <CoverWrapper>
+            {!imageError && (
+              <CoverImage
+                src={thumbnailImage}
+                alt={course.name}
+                onError={handleImageError}
+                onLoad={handleImageLoad}
+                style={{ opacity: imageLoaded ? 1 : 0 }}
+              />
+            )}
             <CrownOutlined style={{
               position: "absolute",
               top: "16px",
               left: "16px",
               fontSize: "24px",
-              color: "#ffd700"
+              color: "#ffd700",
+              zIndex: 2
             }} />
             <CourseTitle level={2}>
               {course.name}
