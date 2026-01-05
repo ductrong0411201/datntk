@@ -67,6 +67,12 @@ export interface UserListItem {
     code: string
     description?: string
   }
+  subject?: {
+    id: number
+    name: string
+    description?: string
+  }
+  subject_id?: number
   createdAt?: string
   updatedAt?: string
 }

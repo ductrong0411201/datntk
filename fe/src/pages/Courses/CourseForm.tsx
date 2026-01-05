@@ -42,6 +42,7 @@ function CourseForm() {
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(false)
   const [subjects, setSubjects] = useState<Subject[]>([])
+  const [allTeachers, setAllTeachers] = useState<UserListItem[]>([])
   const [teachers, setTeachers] = useState<UserListItem[]>([])
   const [lessons, setLessons] = useState<LessonItem[]>([])
   const [isLessonModalVisible, setIsLessonModalVisible] = useState(false)
@@ -57,10 +58,16 @@ function CourseForm() {
           getUsersApi(1, 1000, "name", "ASC", undefined, { roleCode: "giaovien" })
         ])
         setSubjects(subjectsData.items)
-        setTeachers(teachersData.items)
+        setAllTeachers(teachersData.items)
 
         if (id) {
           const courseData = await getCourseByIdApi(Number(id))
+          const subjectId = courseData.subject_id
+          const filteredTeachers = subjectId
+            ? teachersData.items.filter(teacher => teacher.subject_id === subjectId || teacher.subject?.id === subjectId)
+            : teachersData.items
+          setTeachers(filteredTeachers)
+          
           form.setFieldsValue({
             name: courseData.name,
             subject_id: courseData.subject_id,
@@ -72,7 +79,6 @@ function CourseForm() {
             description: courseData.description
           })
 
-          // Load và convert lessons từ database sang format LessonItem
           if (courseData.lessons && courseData.lessons.length > 0) {
             const lessonItems: LessonItem[] = courseData.lessons.map(lesson => ({
               id: lesson.id.toString(),
@@ -84,6 +90,8 @@ function CourseForm() {
             }))
             setLessons(lessonItems)
           }
+        } else {
+          setTeachers(teachersData.items)
         }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error)
@@ -284,7 +292,23 @@ function CourseForm() {
                 label="Môn học"
                 rules={[{ required: true, message: "Vui lòng chọn môn học" }]}
               >
-                <Select placeholder="Chọn môn học" size="large">
+                <Select 
+                  placeholder="Chọn môn học" 
+                  size="large"
+                  onChange={(value) => {
+                    const filteredTeachers = value 
+                      ? allTeachers.filter(teacher => teacher.subject_id === value || teacher.subject?.id === value)
+                      : allTeachers
+                    setTeachers(filteredTeachers)
+                    const currentTeacherId = form.getFieldValue("teacher_id")
+                    if (currentTeacherId) {
+                      const currentTeacher = filteredTeachers.find(t => t.id === currentTeacherId)
+                      if (!currentTeacher) {
+                        form.setFieldValue("teacher_id", undefined)
+                      }
+                    }
+                  }}
+                >
                   {subjects.map(subject => (
                     <Select.Option key={subject.id} value={subject.id}>
                       {subject.name}
@@ -299,6 +323,7 @@ function CourseForm() {
                 name="teacher_id"
                 label="Giáo viên"
                 rules={[{ required: true, message: "Vui lòng chọn giáo viên" }]}
+                dependencies={["subject_id"]}
               >
                 <Select placeholder="Chọn giáo viên" showSearch optionFilterProp="children" size="large">
                   {teachers.map(teacher => (

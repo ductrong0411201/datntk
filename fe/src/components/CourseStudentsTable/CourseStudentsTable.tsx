@@ -260,7 +260,7 @@ function CourseStudentsTable({
                 {allStudents
                   .filter(student => !students.some(s => s.id === student.id))
                   .map(student => {
-                    const displayText = `${student.name} (${student.userName}) - ${student.email}`
+                    const displayText = `${student.name} (${student.userName})`
                     return (
                       <Select.Option key={student.id} value={student.id} label={displayText}>
                         {displayText}
