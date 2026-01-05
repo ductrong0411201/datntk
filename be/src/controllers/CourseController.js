@@ -1,6 +1,6 @@
 const BaseController = require("./BaseController");
 const { Lesson, Subject, User, Course, Role } = require("../models");
-const { sendSuccess, sendNotFound, sendServerError, sendCreated, sendBadRequest } = require("../utils/response");
+const { sendSuccess, sendNotFound, sendServerError, sendCreated, sendBadRequest, sendError } = require("../utils/response");
 
 class CourseController extends BaseController {
   constructor() {
@@ -308,6 +308,76 @@ class CourseController extends BaseController {
     } catch (err) {
       console.error(err.message);
       return sendServerError(res, "Lỗi máy chủ");
+    }
+  }
+
+  async registerWithPayment(req, res) {
+    const { sequelize } = require("../models");
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Lấy student_id từ user đã đăng nhập
+      const student_id = req.user?.id;
+      if (!student_id) {
+        await transaction.rollback();
+        return sendError(res, 403, "Không có quyền truy cập");
+      }
+
+      const { payment_method_id, description } = req.body;
+      const courseId = req.params.id;
+
+      if (!payment_method_id) {
+        await transaction.rollback();
+        return sendBadRequest(res, "payment_method_id là bắt buộc");
+      }
+
+      const course = await Course.findByPk(courseId, { transaction });
+      if (!course) {
+        await transaction.rollback();
+        return sendNotFound(res, "Không tìm thấy khóa học");
+      }
+
+      const student = await User.findByPk(student_id, { transaction });
+      if (!student) {
+        await transaction.rollback();
+        return sendNotFound(res, "Không tìm thấy học sinh");
+      }
+
+      // Kiểm tra học sinh đã đăng ký chưa
+      const students = await course.getStudents({ where: { id: student_id }, transaction });
+      if (students.length > 0) {
+        await transaction.rollback();
+        return sendBadRequest(res, "Học sinh đã có trong khóa học");
+      }
+
+      // Thêm học sinh vào khóa học
+      await course.addStudent(student_id, { transaction });
+
+      // Tạo bản ghi thanh toán
+      const { Payment } = require("../models");
+      const payment = await Payment.create({
+        user_id: student_id,
+        payment_method_id: payment_method_id,
+        course_id: courseId,
+        price: course.price,
+        date: new Date(),
+        description: description || `Thanh toán khóa học: ${course.name}`
+      }, { transaction });
+
+      await transaction.commit();
+
+      const updatedStudent = await User.findByPk(student_id, {
+        attributes: ["id", "name", "userName", "email", "phoneNumber", "address", "dateOfBirth"]
+      });
+
+      return sendCreated(res, {
+        student: updatedStudent,
+        payment: payment
+      }, "Đăng ký và thanh toán thành công");
+    } catch (err) {
+      await transaction.rollback();
+      console.error(err.message);
+      return sendServerError(res, err.message || "Lỗi máy chủ");
     }
   }
 }

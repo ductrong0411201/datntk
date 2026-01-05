@@ -38,7 +38,7 @@ function Payments() {
 
   const columns: ColumnsType<Payment> = [
     {
-      title: "Người dùng",
+      title: "Học sinh",
       dataIndex: ["user", "name"],
       key: "user",
       render: (_: unknown, record: Payment) => record.user?.name || "N/A"

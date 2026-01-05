@@ -113,3 +113,31 @@ export const removeStudentFromCourseApi = async (courseId: number, studentId: nu
 
   throw new Error(response?.message || "Xóa học sinh khỏi khóa học thất bại")
 }
+
+export interface RegisterWithPaymentData {
+  payment_method_id: number
+  description?: string
+}
+
+export interface RegisterWithPaymentResponse {
+  student: CourseStudent
+  payment: {
+    id: number
+    user_id: number
+    payment_method_id: number
+    course_id: number
+    price: number
+    date: string
+    description?: string
+  }
+}
+
+export const registerWithPaymentApi = async (courseId: number, data: RegisterWithPaymentData): Promise<RegisterWithPaymentResponse> => {
+  const response = await apiClient.post<{ status: number; data: RegisterWithPaymentResponse; message: string }>(`/courses/${courseId}/register-payment`, data)
+
+  if (response?.status === 201 && response?.data) {
+    return response.data
+  }
+
+  throw new Error(response?.message || "Đăng ký và thanh toán thất bại")
+}

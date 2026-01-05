@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Typography, Spin, message, Collapse } from "antd"
+import { Typography, Spin, message, Collapse, Modal, Button } from "antd"
 import { CheckCircleOutlined, PlayCircleOutlined, ClockCircleOutlined, VideoCameraOutlined, LaptopOutlined } from "@ant-design/icons"
 import UserLayout from "src/layouts/UserLayout"
-import { getCourseByIdApi, getCourseStudentsApi, addStudentToCourseApi } from "src/apis/course.api"
+import { getCourseByIdApi, getCourseStudentsApi, registerWithPaymentApi } from "src/apis/course.api"
 import type { Course, Lesson } from "src/@types/course"
 import type { LessonGroup } from "./CourseDetail.types"
 import { USER_PATH, PATH } from "src/constants/paths"
 import { useUser } from "src/hooks/useUser"
 import dayjs from "dayjs"
+import qrcodeImage from "src/assets/images/qrcode.jpg"
+import { getRandomSubjectImage } from "src/utils/subjectImages"
 import {
   DetailWrapper,
   ContentSection,
@@ -30,7 +32,13 @@ import {
   ExpandLink,
   LessonItem,
   CourseInfoList,
-  CourseInfoItem
+  CourseInfoItem,
+  PaymentModalContent,
+  QRCodeContainer,
+  QRCodeImage,
+  PaymentInfo,
+  PaymentButtons,
+  VideoThumbnailImage
 } from "./CourseDetail.styles"
 
 const { Title, Text, Paragraph } = Typography
@@ -42,10 +50,13 @@ export default function CourseDetail() {
   const { user } = useUser()
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
-  const [registering, setRegistering] = useState(false)
   const [isRegistered, setIsRegistered] = useState(false)
   const [checkingRegistration, setCheckingRegistration] = useState(true)
   const [expandedPanels, setExpandedPanels] = useState<string[]>([])
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false)
+  const [completingPayment, setCompletingPayment] = useState(false)
+  const [thumbnailImageError, setThumbnailImageError] = useState(false)
+  const [thumbnailImageLoaded, setThumbnailImageLoaded] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -89,19 +100,36 @@ export default function CourseDetail() {
     }
   }
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
+    if (!course || !user) return
+    setPaymentModalVisible(true)
+  }
+
+  const handleCompletePayment = async () => {
     if (!course || !user) return
 
     try {
-      setRegistering(true)
-      await addStudentToCourseApi(course.id, user.id)
+      setCompletingPayment(true)
+      
+      // Gọi API đăng ký và thanh toán trong một transaction
+      // student_id sẽ được lấy tự động từ token, không cần gửi từ frontend
+      await registerWithPaymentApi(course.id, {
+        payment_method_id: 1, // Thanh toán trực tuyến
+        description: `Thanh toán khóa học: ${course.name}`
+      })
+      
       setIsRegistered(true)
-      message.success("Đăng ký khóa học thành công!")
+      setPaymentModalVisible(false)
+      message.success("Thanh toán thành công! Bạn đã được thêm vào khóa học.")
     } catch (error: any) {
-      message.error(error instanceof Error ? error.message : "Đăng ký khóa học thất bại")
+      message.error(error instanceof Error ? error.message : "Hoàn thành thanh toán thất bại")
     } finally {
-      setRegistering(false)
+      setCompletingPayment(false)
     }
+  }
+
+  const handleCancelPayment = () => {
+    setPaymentModalVisible(false)
   }
 
   const formatPrice = (price: number) => {
@@ -281,14 +309,19 @@ export default function CourseDetail() {
           <RightSidebar>
             <VideoCard>
               <VideoThumbnail gradient={getGradientColors(course.id)}>
-                <PlayCircleOutlined className="play-button" />
+                {!thumbnailImageError && (
+                  <VideoThumbnailImage
+                    src={getRandomSubjectImage(course.subject?.name, course.id)}
+                    alt={course.name}
+                    onError={() => setThumbnailImageError(true)}
+                    onLoad={() => setThumbnailImageLoaded(true)}
+                    style={{ opacity: thumbnailImageLoaded ? 1 : 0 }}
+                  />
+                )}
                 <div className="video-title">
                   {course.name}
                 </div>
               </VideoThumbnail>
-              <VideoLink href="#">
-                Xem giới thiệu khóa học
-              </VideoLink>
             </VideoCard>
 
             <PriceCard>
@@ -312,7 +345,6 @@ export default function CourseDetail() {
                 <ActionButton
                   type="primary"
                   size="large"
-                  loading={registering}
                   onClick={handleRegister}
                 >
                   ĐĂNG KÝ HỌC
@@ -346,6 +378,52 @@ export default function CourseDetail() {
           </RightSidebar>
         </ContentSection>
       </DetailWrapper>
+
+      <Modal
+        title="Thanh toán khóa học"
+        open={paymentModalVisible}
+        onCancel={handleCancelPayment}
+        footer={null}
+        width={600}
+        centered
+      >
+        <PaymentModalContent>
+          <PaymentInfo>
+            <Text strong style={{ fontSize: 16 }}>Khóa học: </Text>
+            <Text style={{ fontSize: 16 }}>{course.name}</Text>
+            <div style={{ marginTop: 8 }}>
+              <Text strong style={{ fontSize: 18, color: "#1890ff" }}>
+                Số tiền: {course.price === 0 ? "Miễn phí" : formatPrice(course.price)}
+              </Text>
+            </div>
+          </PaymentInfo>
+
+          <QRCodeContainer>
+            <Text strong style={{ marginBottom: 16, display: "block", textAlign: "center" }}>
+              Quét mã QR để thanh toán
+            </Text>
+            <QRCodeImage src={qrcodeImage} alt="QR Code thanh toán" />
+            <Text type="secondary" style={{ marginTop: 16, display: "block", textAlign: "center", fontSize: 12 }}>
+              Vui lòng quét mã QR bằng ứng dụng ngân hàng của bạn để thanh toán
+            </Text>
+          </QRCodeContainer>
+
+          <PaymentButtons>
+            <Button onClick={handleCancelPayment} size="large">
+              Hủy
+            </Button>
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={handleCompletePayment}
+              loading={completingPayment}
+              size="large"
+            >
+              Đã hoàn thành thanh toán
+            </Button>
+          </PaymentButtons>
+        </PaymentModalContent>
+      </Modal>
     </UserLayout>
   )
 }

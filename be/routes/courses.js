@@ -14,6 +14,7 @@ router.delete("/courses/:id", auth, checkPermission(RESOURCE_TYPES.COURSE, "DELE
 
 router.get("/courses/:id/students", auth, checkPermission(RESOURCE_TYPES.COURSE, "READ"), courseController.getStudents);
 router.post("/courses/:id/students", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courseController.addStudent);
+router.post("/courses/:id/register-payment", auth, courseController.registerWithPayment);
 router.delete("/courses/:id/students/:student_id", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courseController.removeStudent);
 
 module.exports = router;

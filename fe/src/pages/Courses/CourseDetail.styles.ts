@@ -47,10 +47,24 @@ export const VideoThumbnail = styled.div<{ gradient?: string }>`
   color: white;
   position: relative;
   cursor: pointer;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+    z-index: 1;
+  }
   
   .play-button {
     font-size: 64px;
     margin-bottom: 16px;
+    z-index: 2;
+    position: relative;
   }
   
   .video-title {
@@ -58,7 +72,22 @@ export const VideoThumbnail = styled.div<{ gradient?: string }>`
     font-weight: bold;
     text-align: center;
     padding: 0 16px;
+    z-index: 2;
+    position: relative;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   }
+`
+
+export const VideoThumbnailImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 0.3s ease;
+  z-index: 0;
 `
 
 export const VideoLink = styled.a`
@@ -191,5 +220,47 @@ export const CourseInfoItem = styled.div`
     font-size: 18px;
     color: #8c8c8c;
   }
+`
+
+export const PaymentModalContent = styled.div`
+  padding: 8px 0;
+`
+
+export const PaymentInfo = styled.div`
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  
+  div {
+    margin-top: 8px;
+  }
+`
+
+export const QRCodeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  background: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 24px;
+`
+
+export const QRCodeImage = styled.img`
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+`
+
+export const PaymentButtons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 `
 
