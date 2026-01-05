@@ -6,6 +6,7 @@ const checkPermission = require("../src/middlewares/checkPermissionMiddleware");
 const RESOURCE_TYPES = require("../src/constants/resourceTypes");
 
 router.get("/courses", auth, checkPermission(RESOURCE_TYPES.COURSE, "READ"), courseController.list);
+router.get("/courses/my-courses", auth, courseController.getMyCourses);
 router.get("/courses/:id", auth, checkPermission(RESOURCE_TYPES.COURSE, "READ"), courseController.getById);
 router.post("/courses", auth, checkPermission(RESOURCE_TYPES.COURSE, "CREATE"), courseController.create);
 router.put("/courses/:id", auth, checkPermission(RESOURCE_TYPES.COURSE, "UPDATE"), courseController.update);

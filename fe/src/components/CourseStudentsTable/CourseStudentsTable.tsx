@@ -251,18 +251,22 @@ function CourseStudentsTable({
               <Select
                 placeholder="Chọn học sinh"
                 showSearch
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
-                }
+                optionFilterProp="label"
+                filterOption={(input, option) => {
+                  const label = option?.label as string
+                  return label?.toLowerCase().includes(input.toLowerCase()) ?? false
+                }}
               >
                 {allStudents
                   .filter(student => !students.some(s => s.id === student.id))
-                  .map(student => (
-                    <Select.Option key={student.id} value={student.id}>
-                      {student.name} ({student.userName}) - {student.email}
-                    </Select.Option>
-                  ))}
+                  .map(student => {
+                    const displayText = `${student.name} (${student.userName}) - ${student.email}`
+                    return (
+                      <Select.Option key={student.id} value={student.id} label={displayText}>
+                        {displayText}
+                      </Select.Option>
+                    )
+                  })}
               </Select>
             </Form.Item>
           </Form>

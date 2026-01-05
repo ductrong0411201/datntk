@@ -34,6 +34,16 @@ export const getCoursesApi = async (
   throw new Error(response?.message || "Lấy danh sách khóa học thất bại")
 }
 
+export const getMyCoursesApi = async (): Promise<Course[]> => {
+  const response = await apiClient.get<{ status: number; data: Course[]; message: string }>("/courses/my-courses")
+
+  if (response?.status === 200 && response?.data) {
+    return response.data
+  }
+
+  throw new Error(response?.message || "Lấy danh sách khóa học của tôi thất bại")
+}
+
 export const getCourseByIdApi = async (id: number): Promise<Course> => {
   const response = await apiClient.get<CourseResponse>(`/courses/${id}`)
 
@@ -103,4 +113,3 @@ export const removeStudentFromCourseApi = async (courseId: number, studentId: nu
 
   throw new Error(response?.message || "Xóa học sinh khỏi khóa học thất bại")
 }
-

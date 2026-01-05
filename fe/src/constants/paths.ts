@@ -76,4 +76,8 @@ export const USER_PATH = {
     url: "/courses/:id",
     name: "Chi tiết khóa học"
   } as PathWithoutResource,
+  MY_COURSE_DETAIL: {
+    url: "/my-courses/:id",
+    name: "Chi tiết khóa học của tôi"
+  } as PathWithoutResource,
 }

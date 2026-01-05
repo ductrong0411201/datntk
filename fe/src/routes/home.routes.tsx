@@ -8,6 +8,8 @@ import Loading from "src/components/Loading/Loading"
 
 const Home = lazy(() => import("src/pages/Home/Home"))
 const CourseDetail = lazy(() => import("src/pages/Courses/CourseDetail"))
+const MyCourses = lazy(() => import("src/pages/Courses/MyCourses"))
+const MyCourseDetail = lazy(() => import("src/pages/Courses/MyCourseDetail"))
 
 export const homeRoutes = (
   <Fragment>
@@ -42,6 +44,30 @@ export const homeRoutes = (
           <UserGuard>
             <Suspense fallback={<Loading />}>
               <CourseDetail />
+            </Suspense>
+          </UserGuard>
+        </AuthenticatedGuard>
+      }
+    />
+    <Route
+      path={USER_PATH.COURSES.url}
+      element={
+        <AuthenticatedGuard>
+          <UserGuard>
+            <Suspense fallback={<Loading />}>
+              <MyCourses />
+            </Suspense>
+          </UserGuard>
+        </AuthenticatedGuard>
+      }
+    />
+    <Route
+      path={USER_PATH.MY_COURSE_DETAIL.url}
+      element={
+        <AuthenticatedGuard>
+          <UserGuard>
+            <Suspense fallback={<Loading />}>
+              <MyCourseDetail />
             </Suspense>
           </UserGuard>
         </AuthenticatedGuard>

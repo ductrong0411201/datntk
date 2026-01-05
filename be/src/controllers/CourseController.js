@@ -62,6 +62,80 @@ class CourseController extends BaseController {
     }
   }
 
+  async getMyCourses(req, res) {
+    try {
+      const userId = req.user.id;
+      const studentRole = await Role.findOne({ where: { code: "hocsinh" } });
+      const teacherRole = await Role.findOne({ where: { code: "giaovien" } });
+      
+      const user = await User.findByPk(userId, {
+        include: [
+          {
+            model: Role,
+            as: "roleDetail",
+            attributes: ["id", "name", "code"]
+          }
+        ]
+      });
+
+      if (!user) {
+        return sendNotFound(res, "Không tìm thấy người dùng");
+      }
+
+      let courses = [];
+      
+      if (user.role === teacherRole?.id) {
+        courses = await Course.findAll({
+          where: { teacher_id: userId },
+          include: [
+            {
+              model: Subject,
+              as: "subject",
+              attributes: ["id", "name"]
+            },
+            {
+              model: User,
+              as: "teacher",
+              attributes: ["id", "name", "userName", "email"]
+            }
+          ],
+          order: [["createdAt", "DESC"]]
+        });
+      } else if (user.role === studentRole?.id) {
+        const student = await User.findByPk(userId, {
+          include: [
+            {
+              model: Course,
+              as: "enrolledCourses",
+              through: { attributes: [] },
+              include: [
+                {
+                  model: Subject,
+                  as: "subject",
+                  attributes: ["id", "name"]
+                },
+                {
+                  model: User,
+                  as: "teacher",
+                  attributes: ["id", "name", "userName", "email"]
+                }
+              ]
+            }
+          ]
+        });
+        
+        courses = student?.enrolledCourses || [];
+      } else {
+        return sendBadRequest(res, "Người dùng không phải giáo viên hoặc học sinh");
+      }
+
+      return sendSuccess(res, courses, "Lấy danh sách khóa học thành công");
+    } catch (err) {
+      console.error(err.message);
+      return sendServerError(res, "Lỗi máy chủ");
+    }
+  }
+
   async create(req, res) {
     try {
       const {
@@ -118,19 +192,15 @@ class CourseController extends BaseController {
     const lessons = [];
     let lessonNumber = 1;
 
-    // Duyệt qua các ngày từ start đến end
     const currentDate = new Date(start);
     while (currentDate <= end) {
       const dayOfWeekCurrent = currentDate.getDay();
 
-      // Tìm các lesson config có thứ trùng với ngày hiện tại
       const matchingConfigs = lessonDaysArray.filter(config => config.dayOfWeek === dayOfWeekCurrent);
 
-      // Với mỗi config trùng, tạo một lesson
       matchingConfigs.forEach(lessonConfig => {
         const { startTime, endTime, name: lessonName } = lessonConfig;
 
-        // Parse thời gian
         const [startHour, startMinute] = startTime.split(':').map(Number);
         const [endHour, endMinute] = endTime.split(':').map(Number);
 
@@ -140,7 +210,6 @@ class CourseController extends BaseController {
         const lessonEnd = new Date(currentDate);
         lessonEnd.setHours(endHour, endMinute, 0, 0);
 
-        // Sử dụng tên từ config hoặc tên mặc định
         const finalLessonName = lessonName || `Buổi ${lessonNumber}`;
 
         lessons.push({
@@ -152,7 +221,6 @@ class CourseController extends BaseController {
           updatedAt: new Date()
         });
 
-        // Tăng lessonNumber cho mỗi lesson được tạo
         lessonNumber++;
       });
 
@@ -245,4 +313,3 @@ class CourseController extends BaseController {
 }
 
 module.exports = new CourseController();
-
