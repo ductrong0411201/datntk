@@ -14,6 +14,7 @@ const paymentMethodsRouter = require('./routes/paymentMethods');
 const paymentsRouter = require('./routes/payments');
 const coursesRouter = require('./routes/courses');
 const documentsRouter = require('./routes/documents');
+const documentTypesRouter = require('./routes/documentTypes');
 const questionsRouter = require('./routes/questions');
 const answersRouter = require('./routes/answers');
 const app = express();
@@ -50,6 +51,7 @@ app.use('/', paymentMethodsRouter);
 app.use('/', paymentsRouter);
 app.use('/', coursesRouter);
 app.use('/', documentsRouter);
+app.use('/', documentTypesRouter);
 app.use('/', questionsRouter);
 app.use('/', answersRouter);
 

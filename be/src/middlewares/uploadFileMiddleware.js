@@ -9,7 +9,9 @@ const ALLOWED_FILE_TYPES = {
   "image/png": [".png"],
   "image/jpeg": [".jpg", ".jpeg"],
   "application/vnd.ms-excel": [".xls"],
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+  "application/vnd.ms-powerpoint": [".ppt"],
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"]
 };
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024;
@@ -33,14 +35,14 @@ const fileFilter = (req, file, cb) => {
   const fileType = file.mimetype;
   const ext = path.extname(file.originalname).toLowerCase();
   
-  const allowedExtensions = [".doc", ".docx", ".pdf", ".png", ".jpg", ".jpeg", ".xls", ".xlsx"];
+  const allowedExtensions = [".doc", ".docx", ".pdf", ".png", ".jpg", ".jpeg", ".xls", ".xlsx", ".ppt", ".pptx"];
   
   if (ALLOWED_FILE_TYPES[fileType] && allowedExtensions.includes(ext)) {
     cb(null, true);
   } else if (allowedExtensions.includes(ext)) {
     cb(null, true);
   } else {
-    cb(new Error("Định dạng file không được hỗ trợ. Chỉ chấp nhận: doc, docx, pdf, png, jpg, jpeg, xls, xlsx"), false);
+    cb(new Error("Định dạng file không được hỗ trợ. Chỉ chấp nhận: doc, docx, pdf, png, jpg, jpeg, xls, xlsx, ppt, pptx"), false);
   }
 };
 

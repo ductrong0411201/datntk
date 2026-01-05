@@ -1,7 +1,7 @@
 export interface UploadDocumentData {
   file: File
   lesson_id: number
-  document_type_id: number
+  document_type_id?: number
 }
 
 export interface Document {
@@ -38,6 +38,20 @@ export interface Document {
 export interface DocumentResponse {
   status: number
   data: Document
+  message: string
+}
+
+export interface DocumentListResponse {
+  status: number
+  data: {
+    items: Document[]
+    meta: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }
   message: string
 }
 

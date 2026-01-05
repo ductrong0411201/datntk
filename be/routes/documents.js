@@ -7,6 +7,7 @@ const auth = require("../src/middlewares/authorizeMiddleware");
 const checkPermission = require("../src/middlewares/checkPermissionMiddleware");
 const RESOURCE_TYPES = require("../src/constants/resourceTypes");
 
+router.get("/documents", auth, checkPermission(RESOURCE_TYPES.DOCUMENT, "READ"), documentController.list);
 router.post(
   "/documents/upload",
   auth,

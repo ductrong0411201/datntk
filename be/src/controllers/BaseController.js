@@ -117,7 +117,6 @@ class BaseController {
 
   async list(req, res) {
     try {
-      console.log(123123123);
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
       const limitInput = parseInt(req.query.limit, 10);
       const limit = limitInput && limitInput > 0 ? Math.min(limitInput, 100) : 10;
