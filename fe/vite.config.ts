@@ -1,9 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import copy from "rollup-plugin-copy";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [copy({
+    targets: [
+      {
+        src: "node_modules/@nutrient-sdk/viewer/dist/nutrient-viewer-lib",
+        dest: "public/",
+      },
+    ],
+    hook: "buildStart",
+  }), react()],
   resolve: {
     alias: {
       src: path.resolve(__dirname, './src'),

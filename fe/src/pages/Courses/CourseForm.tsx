@@ -11,7 +11,7 @@ import type { Document } from "src/@types/document"
 import CourseStudentsTable from "src/components/CourseStudentsTable/CourseStudentsTable"
 import { message, Form, Input, Select, InputNumber, DatePicker, TimePicker, Button, Card, Typography, Row, Col, Table, Modal, Upload, Space } from "antd"
 import { PlusOutlined, DeleteOutlined, EditOutlined, FileTextOutlined, UploadOutlined, DownloadOutlined, CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from "@ant-design/icons"
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer"
+import DocumentViewer from "src/components/DocumentViewer/DocumentViewer"
 import dayjs from "dayjs"
 import { ADMIN_PATH } from "src/constants/paths"
 import type { ColumnsType } from "antd/es/table"
@@ -335,15 +335,6 @@ function CourseForm() {
     setViewingDocument(null)
   }
 
-  const getDocumentViewerFiles = (document: Document) => {
-    const fileUrl = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
-    return [
-      {
-        uri: fileUrl,
-        fileName: document.name
-      }
-    ]
-  }
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes"
@@ -825,20 +816,7 @@ function CourseForm() {
           styles={{ body: { padding: 0, height: "80vh" } }}
         >
           {viewingDocument && (
-            <div style={{ width: "100%", height: "100%" }}>
-              <DocViewer
-                key={viewingDocument.id}
-                pluginRenderers={DocViewerRenderers}
-                documents={getDocumentViewerFiles(viewingDocument)}
-                config={{
-                  header: {
-                    disableHeader: false,
-                    disableFileName: false
-                  }
-                }}
-                style={{ height: "80vh" }}
-              />
-            </div>
+            <DocumentViewer key={viewingDocument.id} document={viewingDocument} height="80vh" />
           )}
         </Modal>
       </Card>

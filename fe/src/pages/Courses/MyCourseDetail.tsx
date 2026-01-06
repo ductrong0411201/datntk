@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Typography, Spin, message, Tabs, Collapse, Table, Form, Input, Button, Avatar, Empty, List, Modal } from "antd"
 import { UserOutlined, MessageOutlined, FileTextOutlined, DownloadOutlined, EyeOutlined } from "@ant-design/icons"
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer"
+import DocumentViewer from "src/components/DocumentViewer/DocumentViewer"
 import UserLayout from "src/layouts/UserLayout"
 import { getCourseByIdApi, getCourseStudentsApi } from "src/apis/course.api"
 import { getQuestionsByCourseIdApi, createQuestionApi } from "src/apis/question.api"
@@ -342,15 +342,6 @@ export default function MyCourseDetail() {
     setViewingDocument(null)
   }
 
-  const getDocumentViewerFiles = (document: Document) => {
-    const fileUrl = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${document.file_path}`
-    return [
-      {
-        uri: fileUrl,
-        fileName: document.name
-      }
-    ]
-  }
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes"
@@ -747,20 +738,7 @@ export default function MyCourseDetail() {
         styles={{ body: { padding: 0, height: "80vh" } }}
       >
         {viewingDocument && (
-          <div style={{ width: "100%", height: "100%" }}>
-            <DocViewer
-              key={viewingDocument.id}
-              pluginRenderers={DocViewerRenderers}
-              documents={getDocumentViewerFiles(viewingDocument)}
-              config={{
-                header: {
-                  disableHeader: false,
-                  disableFileName: false
-                }
-              }}
-              style={{ height: "80vh" }}
-            />
-          </div>
+          <DocumentViewer key={viewingDocument.id} document={viewingDocument} height="80vh" />
         )}
       </Modal>
     </UserLayout>
