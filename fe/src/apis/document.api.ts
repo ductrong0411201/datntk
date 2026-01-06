@@ -63,6 +63,12 @@ export const uploadDocumentApi = async (data: UploadDocumentData): Promise<Docum
   if (data.document_type_id) {
     formData.append("document_type_id", data.document_type_id.toString())
   }
+  if (data.document_type_code) {
+    formData.append("document_type_code", data.document_type_code)
+  }
+  if (data.target_user_id) {
+    formData.append("target_user_id", data.target_user_id.toString())
+  }
 
   const response = await apiClient.post<DocumentResponse>("/documents/upload", formData, {
     headers: {
@@ -75,5 +81,15 @@ export const uploadDocumentApi = async (data: UploadDocumentData): Promise<Docum
   }
 
   throw new Error(response?.message || "Upload file thất bại")
+}
+
+export const deleteDocumentApi = async (id: number): Promise<void> => {
+  const response = await apiClient.delete<{ status: number; message: string }>(`/documents/${id}`)
+
+  if (response?.status === 200) {
+    return
+  }
+
+  throw new Error(response?.message || "Xóa tài liệu thất bại")
 }
 

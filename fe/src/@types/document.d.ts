@@ -2,6 +2,8 @@ export interface UploadDocumentData {
   file: File
   lesson_id: number
   document_type_id?: number
+  document_type_code?: string
+  target_user_id?: number
 }
 
 export interface Document {
@@ -32,6 +34,13 @@ export interface Document {
     id: number
     name: string
     code: string
+  }
+  target_user_id?: number
+  targetUser?: {
+    id: number
+    name: string
+    userName: string
+    email: string
   }
 }
 

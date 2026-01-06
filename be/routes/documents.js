@@ -40,6 +40,7 @@ router.post(
   },
   documentController.upload
 );
+router.delete("/documents/:id", auth, checkPermission(RESOURCE_TYPES.DOCUMENT, "DELETE"), documentController.remove);
 
 module.exports = router;
 

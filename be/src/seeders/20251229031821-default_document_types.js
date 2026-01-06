@@ -21,6 +21,13 @@ module.exports = {
           createdAt: now,
           updatedAt: now,
         },
+        {
+          id: 3,
+          name: "Chữa bài",
+          code: "chua-bai",
+          createdAt: now,
+          updatedAt: now,
+        },
       ],
       {
         ignoreDuplicates: true,
@@ -29,7 +36,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("document_types", { id: [1, 2] }, {});
+    await queryInterface.bulkDelete("document_types", { id: [1, 2, 3] }, {});
   },
 };
 

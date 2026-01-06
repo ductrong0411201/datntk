@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Document extends Model {
     static associate(models) {
       Document.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
+      Document.belongsTo(models.User, { foreignKey: "target_user_id", as: "targetUser" });
       Document.belongsTo(models.Lesson, { foreignKey: "lessonn_id", as: "lesson" });
       Document.belongsTo(models.DocumentType, { foreignKey: "document_type_id", as: "documentType" });
     }
@@ -46,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       file_mimetype: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      target_user_id: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
     },
