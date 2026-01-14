@@ -4,9 +4,11 @@ import BaseTable from "src/components/BaseTable/BaseTable"
 import { getPaymentsApi, deletePaymentApi, createPaymentApi, updatePaymentApi } from "src/apis/payment.api"
 import { getUsersApi } from "src/apis/user.api"
 import { getPaymentMethodsApi } from "src/apis/paymentMethod.api"
+import { getCoursesApi } from "src/apis/course.api"
 import type { Payment } from "src/@types/payment"
 import type { UserListItem } from "src/@types/user"
 import type { PaymentMethod } from "src/@types/paymentMethod"
+import type { Course } from "src/@types/course"
 import { message, Modal, Form, Input, Select, InputNumber, DatePicker } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import dayjs from "dayjs"
@@ -19,16 +21,19 @@ function Payments() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [users, setUsers] = useState<UserListItem[]>([])
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [usersData, paymentMethodsData] = await Promise.all([
+        const [usersData, paymentMethodsData, coursesData] = await Promise.all([
           getUsersApi(1, 1000),
-          getPaymentMethodsApi(1, 1000)
+          getPaymentMethodsApi(1, 1000),
+          getCoursesApi(1, 1000)
         ])
         setUsers(usersData.items)
         setPaymentMethods(paymentMethodsData.items)
+        setCourses(coursesData.items)
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error)
       }
@@ -159,7 +164,7 @@ function Payments() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        getDeleteMessage={(record) => `Bạn có chắc chắn muốn xóa thanh toán này?`}
+        getDeleteMessage={() => `Bạn có chắc chắn muốn xóa thanh toán này?`}
         loading={loading}
         refreshKey={refreshKey}
       />
@@ -207,9 +212,15 @@ function Payments() {
           <Form.Item
             name="course_id"
             label="Khóa học"
-            rules={[{ required: true, message: "Vui lòng nhập ID khóa học" }]}
+            rules={[{ required: true, message: "Vui lòng chọn khóa học" }]}
           >
-            <InputNumber placeholder="Nhập ID khóa học" style={{ width: "100%" }} min={1} />
+            <Select placeholder="Chọn khóa học" showSearch optionFilterProp="children">
+              {courses.map(course => (
+                <Select.Option key={course.id} value={course.id}>
+                  {course.name} - {course.teacher?.name || "N/A"}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item
             name="price"
@@ -221,7 +232,10 @@ function Payments() {
               style={{ width: "100%" }} 
               min={0}
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+              parser={(value) => {
+                const parsed = value?.replace(/\$\s?|(,*)/g, '')
+                return parsed ? (Number(parsed) as any) : (0 as any)
+              }}
             />
           </Form.Item>
           <Form.Item
