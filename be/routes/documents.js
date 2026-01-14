@@ -4,14 +4,11 @@ const multer = require("multer");
 const documentController = require("../src/controllers/DocumentController");
 const uploadFileMiddleware = require("../src/middlewares/uploadFileMiddleware");
 const auth = require("../src/middlewares/authorizeMiddleware");
-const checkPermission = require("../src/middlewares/checkPermissionMiddleware");
-const RESOURCE_TYPES = require("../src/constants/resourceTypes");
 
-router.get("/documents", auth, checkPermission(RESOURCE_TYPES.DOCUMENT, "READ"), documentController.list);
+router.get("/documents", auth, documentController.list);
 router.post(
   "/documents/upload",
   auth,
-  checkPermission(RESOURCE_TYPES.DOCUMENT, "CREATE"),
   (req, res, next) => {
     uploadFileMiddleware(req, res, (err) => {
       if (err) {
@@ -40,7 +37,7 @@ router.post(
   },
   documentController.upload
 );
-router.delete("/documents/:id", auth, checkPermission(RESOURCE_TYPES.DOCUMENT, "DELETE"), documentController.remove);
+router.delete("/documents/:id", auth, documentController.remove);
 
 module.exports = router;
 
