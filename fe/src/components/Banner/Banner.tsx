@@ -12,8 +12,12 @@ import {
   BannerImage,
   BannerImg
 } from "./Banner.styles"
+import { useSelector } from "react-redux"
+import type { RootState } from "src/reducer/reducer"
 
 const Banner = () => {
+  const isAuthenticated = useSelector((state: RootState) => state.app.isAuthenticated)
+
   return (
     <BannerWrapper>
       <Row gutter={[24, 24]} align="middle">
@@ -28,9 +32,9 @@ const Banner = () => {
             <Description>
               Học trực tiếp với giảng viên và trợ giảng giàu kinh nghiệm. Chấm bài trực tiếp. Giờ học linh hoạt, phù hợp mọi đối tượng.
             </Description>
-            <CTAButton type="primary" size="large">
+            { isAuthenticated ? "": <CTAButton type="primary" size="large">
               ĐĂNG KÝ NGAY
-            </CTAButton>
+            </CTAButton>}
           </BannerContent>
         </Col>
         <Col xs={24} md={12}>
