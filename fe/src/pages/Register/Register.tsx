@@ -5,7 +5,8 @@ import { useNavigate, Link } from "react-router-dom"
 import { PATH } from "src/constants/paths"
 import type { RootState } from "src/reducer/reducer"
 import { RegisterContent, RegisterWrapper } from "./Register.styles"
-import { Alert, Button, Card, Form, Input, Typography } from "antd"
+import { Alert, Button, Card, Form, Input, Typography, DatePicker } from "antd"
+import dayjs from "dayjs"
 
 const mapStateToProps = (state: RootState) => ({
   loading: state.register.loading
@@ -26,11 +27,18 @@ const Register = (props: Props) => {
   const [success, setSuccess] = useState(false)
   const navigate = useNavigate()
 
-  const submit = (values: ReqRegister) => {
+  const submit = (values: any) => {
     if (loading) return
     setError("")
     setSuccess(false)
-    register(values)
+    
+    const submitValues: ReqRegister = {
+      ...values,
+      dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).format("YYYY") : undefined,
+      phoneNumber: values.phoneNumber?.replace(/[\s\-\(\)]/g, "") || undefined
+    }
+    
+    register(submitValues)
       .then(() => {
         setSuccess(true)
         setTimeout(() => {
@@ -102,6 +110,55 @@ const Register = (props: Props) => {
               ]}
             >
               <Input.Password size="large" placeholder="Nhập mật khẩu" />
+            </Form.Item>
+            <Form.Item
+              label="Năm sinh"
+              name="dateOfBirth"
+              rules={[
+                { required: false },
+                {
+                  validator: (_, value) => {
+                    if (!value) return Promise.resolve()
+                    const year = dayjs(value).year()
+                    const currentYear = dayjs().year()
+                    if (year < 1900 || year > currentYear) {
+                      return Promise.reject(new Error("Năm sinh không hợp lệ"))
+                    }
+                    return Promise.resolve()
+                  }
+                }
+              ]}
+            >
+              <DatePicker
+                size="large"
+                placeholder="Chọn năm sinh"
+                picker="year"
+                style={{ width: "100%" }}
+                format="YYYY"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Số điện thoại"
+              name="phoneNumber"
+              rules={[
+                { required: false },
+                {
+                  validator: (_, value) => {
+                    if (!value) return Promise.resolve()
+                    const cleaned = value.replace(/[\s\-\(\)]/g, "")
+                    if (!/^[0-9]{10,11}$/.test(cleaned)) {
+                      return Promise.reject(new Error("Số điện thoại phải có 10-11 chữ số"))
+                    }
+                    return Promise.resolve()
+                  }
+                }
+              ]}
+            >
+              <Input
+                size="large"
+                placeholder="Nhập số điện thoại"
+                maxLength={15}
+              />
             </Form.Item>
             <Form.Item>
               <Button

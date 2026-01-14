@@ -4,31 +4,96 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const jwtGenerator = require("../utils/jwt-generator");
-const { sendSuccess, sendCreated, sendUnauthorized, sendNotFound, sendServerError } = require("../utils/response");
+const { sendSuccess, sendCreated, sendUnauthorized, sendNotFound, sendServerError, sendBadRequest } = require("../utils/response");
 
 exports.register = async (req, res) => {
   try {
-    const { name, userName, email, password } = req.body;
+    const { name, userName, email, password, dateOfBirth, phoneNumber } = req.body;
+
+    if (!name || !userName || !email || !password) {
+      return sendBadRequest(res, "Vui lòng điền đầy đủ thông tin");
+    }
+
+    if (password.length < 6 || password.length > 64) {
+      return sendBadRequest(res, "Mật khẩu phải có độ dài từ 6 đến 64 ký tự");
+    }
+
+    let cleanedPhoneNumber = null;
+    if (phoneNumber) {
+      cleanedPhoneNumber = phoneNumber.replace(/[\s\-\(\)]/g, "");
+      if (!/^[0-9]{10,11}$/.test(cleanedPhoneNumber)) {
+        return sendBadRequest(res, "Số điện thoại không hợp lệ");
+      }
+    }
+
     const oldUser = await User.findOne({ where: { [Op.or]: [{ email }, { userName }] } });
     if (oldUser) {
-      return sendUnauthorized(res, "Người dùng đã tồn tại!");
+      if (oldUser.email === email) {
+        return sendBadRequest(res, "Email đã được sử dụng");
+      }
+      if (oldUser.userName === userName) {
+        return sendBadRequest(res, "Tên đăng nhập đã được sử dụng");
+      }
     }
+
+    const { Role } = require("../models");
+    const studentRole = await Role.findOne({ where: { code: "hocsinh" } });
+    
+    if (!studentRole) {
+      return sendServerError(res, "Không tìm thấy role học sinh");
+    }
+
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
+    
+    let parsedDateOfBirth = null;
+    if (dateOfBirth) {
+      if (dateOfBirth.length === 4) {
+        parsedDateOfBirth = new Date(`${dateOfBirth}-01-01`);
+      } else {
+        parsedDateOfBirth = new Date(dateOfBirth);
+      }
+      if (isNaN(parsedDateOfBirth.getTime())) {
+        return sendBadRequest(res, "Năm sinh không hợp lệ");
+      }
+    }
+    
     const newUser = await User.create({
       name,
       userName,
       email,
       password: hashedPassword,
+      role: studentRole.id,
+      dateOfBirth: parsedDateOfBirth,
+      phoneNumber: cleanedPhoneNumber,
     });
+
     return sendCreated(res, {
       id: newUser.id,
       name: newUser.name,
       userName: newUser.userName,
       email: newUser.email,
-    }, "Tạo người dùng thành công");
+    }, "Đăng ký thành công");
   } catch (err) {
     console.error(err.message);
+    
+    if (err.name === "SequelizeUniqueConstraintError") {
+      if (err.errors && err.errors.length > 0) {
+        const field = err.errors[0].path;
+        if (field === "email") {
+          return sendBadRequest(res, "Email đã được sử dụng");
+        }
+        if (field === "userName") {
+          return sendBadRequest(res, "Tên đăng nhập đã được sử dụng");
+        }
+      }
+      return sendBadRequest(res, "Thông tin đăng ký đã tồn tại");
+    }
+    
+    if (err.name === "SequelizeValidationError") {
+      return sendBadRequest(res, err.errors?.[0]?.message || "Dữ liệu không hợp lệ");
+    }
+    
     return sendServerError(res, "Lỗi máy chủ");
   }
 };

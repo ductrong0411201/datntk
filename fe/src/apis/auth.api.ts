@@ -34,33 +34,42 @@ export const registerApi = async ({
   name,
   userName,
   email,
-  password
+  password,
+  dateOfBirth,
+  phoneNumber
 }: ReqRegister): Promise<ResRegisterApi> => {
-  const response = await apiClient.post<{
-    status: number
-    data: {
-      id: string
-      name: string
-      userName: string
-      email: string
-    }
-    message: string
-  }>("/register", {
-    name,
-    userName,
-    email,
-    password
-  })
+  try {
+    const response = await apiClient.post<{
+      status: number
+      data: {
+        id: number
+        name: string
+        userName: string
+        email: string
+      }
+      message: string
+    }>("/register", {
+      name,
+      userName,
+      email,
+      password,
+      dateOfBirth,
+      phoneNumber
+    })
 
-  if (response?.status === 201 && response?.data) {
-    return {
-      status: 201,
-      data: response.data,
-      message: response.message || "Đăng ký thành công"
+    if (response?.status === 201 && response?.data) {
+      return {
+        status: 201,
+        data: response.data,
+        message: response.message || "Đăng ký thành công"
+      }
     }
+
+    throw new Error(response?.message || "Đăng ký thất bại")
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Đăng ký thất bại"
+    throw new Error(message)
   }
-
-  throw new Error(response?.message || "Đăng ký thất bại")
 }
 
 export const getMeApi = async (): Promise<User> => {

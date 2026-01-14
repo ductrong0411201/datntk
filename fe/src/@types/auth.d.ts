@@ -18,6 +18,8 @@ export interface ReqRegister {
   userName: string
   email: string
   password: string
+  dateOfBirth?: string
+  phoneNumber?: string
 }
 
 export interface ResRegisterApi {
