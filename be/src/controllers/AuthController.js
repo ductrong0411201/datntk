@@ -48,12 +48,16 @@ exports.register = async (req, res) => {
     
     let parsedDateOfBirth = null;
     if (dateOfBirth) {
-      if (dateOfBirth.length === 4) {
-        parsedDateOfBirth = new Date(`${dateOfBirth}-01-01`);
-      } else {
-        parsedDateOfBirth = new Date(dateOfBirth);
-      }
+      parsedDateOfBirth = new Date(dateOfBirth);
       if (isNaN(parsedDateOfBirth.getTime())) {
+        return sendBadRequest(res, "Ngày sinh không hợp lệ");
+      }
+      const currentDate = new Date();
+      if (parsedDateOfBirth > currentDate) {
+        return sendBadRequest(res, "Ngày sinh không thể lớn hơn ngày hiện tại");
+      }
+      const year = parsedDateOfBirth.getFullYear();
+      if (year < 1900) {
         return sendBadRequest(res, "Năm sinh không hợp lệ");
       }
     }

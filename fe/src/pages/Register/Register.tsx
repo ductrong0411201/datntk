@@ -34,7 +34,7 @@ const Register = (props: Props) => {
     
     const submitValues: ReqRegister = {
       ...values,
-      dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).format("YYYY") : undefined,
+      dateOfBirth: values.dateOfBirth ? dayjs(values.dateOfBirth).format("YYYY-MM-DD") : undefined,
       phoneNumber: values.phoneNumber?.replace(/[\s\-\(\)]/g, "") || undefined
     }
     
@@ -112,17 +112,18 @@ const Register = (props: Props) => {
               <Input.Password size="large" placeholder="Nhập mật khẩu" />
             </Form.Item>
             <Form.Item
-              label="Năm sinh"
+              label="Ngày sinh"
               name="dateOfBirth"
               rules={[
                 { required: false },
                 {
                   validator: (_, value) => {
                     if (!value) return Promise.resolve()
-                    const year = dayjs(value).year()
-                    const currentYear = dayjs().year()
-                    if (year < 1900 || year > currentYear) {
-                      return Promise.reject(new Error("Năm sinh không hợp lệ"))
+                    const birthDate = dayjs(value)
+                    const currentDate = dayjs()
+                    const year = birthDate.year()
+                    if (year < 1900 || birthDate.isAfter(currentDate)) {
+                      return Promise.reject(new Error("Ngày sinh không hợp lệ"))
                     }
                     return Promise.resolve()
                   }
@@ -131,10 +132,12 @@ const Register = (props: Props) => {
             >
               <DatePicker
                 size="large"
-                placeholder="Chọn năm sinh"
-                picker="year"
+                placeholder="Chọn ngày sinh"
                 style={{ width: "100%" }}
-                format="YYYY"
+                format="DD/MM/YYYY"
+                disabledDate={(current) => {
+                  return current && current > dayjs().endOf("day")
+                }}
               />
             </Form.Item>
             <Form.Item
