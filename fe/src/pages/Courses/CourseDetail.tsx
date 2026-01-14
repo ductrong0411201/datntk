@@ -57,7 +57,7 @@ export default function CourseDetail() {
   const [completingPayment, setCompletingPayment] = useState(false)
   const [thumbnailImageError, setThumbnailImageError] = useState(false)
   const [thumbnailImageLoaded, setThumbnailImageLoaded] = useState(false)
-
+  console.log(user);
   useEffect(() => {
     if (id) {
       loadCourse()
@@ -333,7 +333,7 @@ export default function CourseDetail() {
 
               {checkingRegistration ? (
                 <Spin style={{ display: "block", textAlign: "center", padding: "20px 0" }} />
-              ) : isRegistered ? (
+              ) : user?.roleDetail?.code === "giaovien" ? null : isRegistered ? (
                 <ActionButton
                   type="default"
                   icon={<CheckCircleOutlined />}
@@ -341,7 +341,7 @@ export default function CourseDetail() {
                 >
                   Đã đăng ký
                 </ActionButton>
-              ) : user ? (
+              ) : user?.roleDetail?.code === "hocsinh" ? (
                 <ActionButton
                   type="primary"
                   size="large"
